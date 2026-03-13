@@ -890,8 +890,8 @@ export default function App() {
       <div style={S.wrap}>
         <div style={S.header}>
           <div style={{fontSize:"2rem",letterSpacing:5,marginBottom:8}}>⭐ 🌟 ⭐</div>
-          <h1 style={S.h1}>🎒 Məktəbə Hazırlıq 🎒</h1>
-          <p style={S.subtitle}>Sevimli şagird, gəl birlikdə öyrənək! 📚</p>
+          <h1 style={S.h1}>🎒 Mehin 🎒</h1>
+          <p style={S.subtitle}>Sevimli Mehin, gəl birlikdə öyrənək! 📚</p>
         </div>
 
         <nav style={S.nav}>
