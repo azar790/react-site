@@ -581,8 +581,8 @@ export default function App() {
       <div className="wrap">
         <div className="app-header">
           <div style={{fontSize:"1.7rem",letterSpacing:5,marginBottom:6}}>⭐ 🌟 ⭐</div>
-          <h1 className="app-h1">🎒 Məktəbə Hazırlıq 🎒</h1>
-          <p className="app-sub">Sevimli şagird, gəl birlikdə öyrənək! 📚</p>
+          <h1 className="app-h1">🎒 Mehinin dərsi 🎒</h1>
+          <p className="app-sub">Sevimli Mehin, gəl birlikdə öyrənək! 📚</p>
         </div>
         <nav className="nav">
           {TABS.map(t=>(
