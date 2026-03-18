@@ -183,7 +183,7 @@ const WATER_HARMS = [
 ];
 
 const AZ_NEIGHBOURS = [
-  {flag:"🇷🇺", name:"Rusiya",     bg:"#ffeaea", color:"#8a0000"},
+  {flag:"", name:"Rusiya",     bg:"#ffeaea", color:"#8a0000"},
   {flag:"🇬🇪", name:"Gürcüstan",  bg:"#fff6e0", color:"#7a5000"},
   {flag:"🇦🇲", name:"Ermənistan", bg:"#f0e8ff", color:"#4a1a80"},
   {flag:"🇮🇷", name:"İran",       bg:"#e8f5e8", color:"#1a5a1a"},
@@ -854,9 +854,9 @@ function SectionOlkem() {
           <div style={{flex:1,minWidth:160}}>
             {[
               {color:"#0092BC", label:"Mavi — türkçülüyü"},
-              {color:"#EF3340", label:"Qırmızı — müasirliyi"},
+              {color:"#EF3340", label:"Qırmızı — müasirliyi və demokratiyanı"},
               {color:"#509E2F", label:"Yaşıl — islamı"},
-              {color:"white",   label:"Ay-Ulduz (ağ) — İslam dini", border:true},
+              {color:"white",   label:"Ay-Ulduz (ağ) — milli-mənəvi dəyərləri", border:true},
             ].map((item,i)=>(
               <div key={i} style={{display:"flex",alignItems:"center",gap:9,marginBottom:8}}>
                 <div style={{width:18,height:18,borderRadius:"50%",background:item.color,flexShrink:0,border:item.border?"2px solid #ccc":"none"}}/>
