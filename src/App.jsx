@@ -93,7 +93,121 @@ const QUIZ_QUESTIONS = [
   { id:18, topic:"🚀 Kosmos",  q:"Yaşamaq üçün uyğun planet hansıdır?",       opts:["Mars","Venera","Yer","Saturn"],                           ans:"Yer" },
   { id:19, topic:"🚀 Kosmos",  q:"Ən çox peyki olan planet hansıdır?",        opts:["Yupiter","Uran","Neptun","Saturn"],                       ans:"Saturn" },
   { id:20, topic:"🚀 Kosmos",  q:"Günəşdən ən uzaq planet hansıdır?",         opts:["Uran","Saturn","Neptun","Mars"],                          ans:"Neptun" },
+  { id:21, topic:"💧 Sular",  q:"Okean suyu necədir?",                       opts:["Şirin","Duzlu","Soyuq","Dadlı"],                         ans:"Duzlu" },
+  { id:22, topic:"💧 Sular",  q:"Hər tərəfi quru ilə əhatə olunmuş su?",    opts:["Okean","Dəniz","Göl","Çay"],                             ans:"Göl" },
+  { id:23, topic:"💧 Sular",  q:"Azərbaycandan axan ən böyük çay?",         opts:["Araz","Kür","Nil","Amazon"],                             ans:"Kür" },
+  { id:24, topic:"💧 Sular",  q:"Çay suyu necədir?",                        opts:["Duzlu","Şirin","Qaynar","Donmuş"],                       ans:"Şirin" },
+  { id:25, topic:"💧 Sular",  q:"Azərbaycandakı dənizin adı nədir?",        opts:["Qara dəniz","Aral","Xəzər dənizi","Hind okeanı"],        ans:"Xəzər dənizi" },
+  { id:26, topic:"💧 Sular",  q:"Neçə əsas su hövzəsi növü var?",           opts:["2","3","4","5"],                                         ans:"4" },
+  { id:27, topic:"🇦🇿 Ölkəm", q:"Azərbaycan bayrağında neçə rəng var?",     opts:["2","3","4","5"],                                         ans:"3" },
+  { id:28, topic:"🇦🇿 Ölkəm", q:"Azərbaycanın paytaxtı hansıdır?",          opts:["Gəncə","Sumqayıt","Bakı","Lənkəran"],                    ans:"Bakı" },
+  { id:29, topic:"🇦🇿 Ölkəm", q:"Azərbaycanın neçə qonşusu var?",           opts:["3","4","5","6"],                                         ans:"5" },
+  { id:30, topic:"🇦🇿 Ölkəm", q:"Dövlətin 3 əsas simvolu hansıdır?",        opts:["Pul+Dil+Bayraq","Bayraq+Gerb+Himn","Prezident+Gerb+Himn","Xəritə+Himn+Gerb"], ans:"Bayraq+Gerb+Himn" },
+  { id:31, topic:"🇦🇿 Ölkəm", q:"Azərbaycan bayrağının rəngləri?",          opts:["Sarı-Qırmızı-Yaşıl","Mavi-Qırmızı-Yaşıl","Ağ-Mavi-Qırmızı","Qırmızı-Sarı-Yaşıl"], ans:"Mavi-Qırmızı-Yaşıl" },
+  { id:32, topic:"🇦🇿 Ölkəm", q:"Sərhədi keçmək üçün nə lazımdır?",        opts:["Pul","Pasport","Bilet","Telefon"],                        ans:"Pasport" },
 ];
+
+// ─── WATER & COUNTRY DATA ───────────────────────────────────────────────────
+const WATER_TYPES = [
+  {
+    id:"ocean", icon:"🌊", name:"Okean", tag:"Ən böyük", color:"#0277BD",
+    short:"Yer kürəsinin ən böyük su hissəsidir.",
+    facts:[
+      "Dünyada 5 okean var: Sakit, Atlantik, Hind, Arktika, Cənub.",
+      "Okean suyu duzludur — içmək olmaz! 🧂",
+      "Ən dərin yer Mariana çuxurudur — 11 km dərindir! 🕳️",
+      "Okean o qədər böyükdür ki, bütün qitələr içinə sığar.",
+      "Hər növ balıq, balina, ahtapot okeanda yaşayır. 🐋",
+    ],
+    salt:"Duzlu 🧂", move:"Az hərəkət 🌊", size:"Ən böyük 🌍", local:"Bizdə yoxdur ❌",
+    diff:"Ən böyük su kütləsidir. Duzlu, dərin, qurudan kənarda olur.",
+  },
+  {
+    id:"sea", icon:"🐟", name:"Dəniz", tag:"Duzlu su", color:"#006a6a",
+    short:"Okeanın quruya bitişik olan hissəsidir.",
+    facts:[
+      "Dəniz okeanın bir parçasıdır — amma daha kiçikdir.",
+      "Dəniz suyu da duzludur. 🧂",
+      "Azərbaycanda Xəzər dənizi var — dünyanın ən böyük qapalı dənizi! 🇦🇿",
+      "Dənizdə balıqlar, delfin, meduzalar yaşayır. 🐬",
+      "Gəmilər dənizdən keçir, ticarət aparılır. 🚢",
+    ],
+    salt:"Duzlu 🧂", move:"Az hərəkət 🌊", size:"Böyük 🗺️", local:"Xəzər dənizi ✅",
+    diff:"Okeanın bir hissəsidir, quruya yaxın olur. Okeandan kiçikdir.",
+  },
+  {
+    id:"lake", icon:"🏞️", name:"Göl", tag:"Sakit su", color:"#1a7a30",
+    short:"Hər tərəfi torpaqla əhatə olunmuş sakit su hövzəsidir.",
+    facts:[
+      "Gölün hər tərəfini quru torpaq əhatə edir — axmır, dayanır.",
+      "Göl şirin (içilən) ya da duzlu ola bilər. 💧",
+      "Azərbaycanda Mingəçevir su anbarı ən böyük gölümüzdür. 🇦🇿",
+      "Göllər içməli su, balıq və istirahət üçün vacibdir. 🎣",
+      "Dünyanın ən böyük şirin su gölü Baykal gölüdür. 🌊",
+    ],
+    salt:"Şirin 💧", move:"Axmır 🏞️", size:"Orta ölçülü", local:"Mingəçevir ✅",
+    diff:"Hər tərəfindən quru ilə əhatə olunur, axmır. Çaydən fərqli olaraq sakit durur.",
+  },
+  {
+    id:"river", icon:"🏔️", name:"Çay", tag:"Axan su", color:"#6a2fa0",
+    short:"Daim hərəkət edən, axan şirin su axınıdır.",
+    facts:[
+      "Çay dağdan başlayır, axır-axır dənizə ya gölə çatır. 🏔️➡️🌊",
+      "Çay suyu şirindir — içmək, suvarma üçün istifadə olunur. 💧",
+      "Azərbaycanda ən böyük çay Kür çayıdır (1515 km!). 🇦🇿",
+      "Torpaq suvarılır — meyvə, tərəvəz böyüyür. 🌽",
+      "Amazon, Nil, Kür — dünyanın tanınmış çaylarıdır. 🌍",
+    ],
+    salt:"Şirin 💧", move:"Axır ➡️", size:"Uzun, dar", local:"Kür çayı ✅",
+    diff:"Daim axır, başlanğıcı dağ ya bulaq, sonu isə dəniz ya göldür.",
+  },
+];
+
+const WATER_BENEFITS = [
+  {icon:"🐟", text:"Balıq verir — yeyirik, sağlam oluruq!"},
+  {icon:"💧", text:"İçməli su mənbəyidir."},
+  {icon:"🌱", text:"Bitkilər suvarılır, meyvə yetişir."},
+  {icon:"🚢", text:"Gəmilər mal daşıyır."},
+  {icon:"☁️", text:"Buludlar yaranır, yağış yağır."},
+  {icon:"⚡", text:"Su elektrik enerjisi verir (HES)."},
+  {icon:"🏊", text:"İnsanlar üzür, istirahət edir."},
+];
+
+const WATER_HARMS = [
+  {icon:"🌊", text:"Daşqın — evləri su basır, zərər verir."},
+  {icon:"⚠️", text:"Nəzarətsiz suya düşmə təhlükəsi var."},
+  {icon:"🦠", text:"Çirkab suda mikroblar yaranır."},
+  {icon:"🌡️", text:"İqlim dəyişir, quraqlıq yarana bilər."},
+  {icon:"🐢", text:"Zibil suları çirkləndirir."},
+  {icon:"🌀", text:"Fırtına dalğaları böyük zərər verir."},
+];
+
+const AZ_NEIGHBOURS = [
+  {flag:"🇷🇺", name:"Rusiya",     bg:"#ffeaea", color:"#8a0000"},
+  {flag:"🇬🇪", name:"Gürcüstan",  bg:"#fff6e0", color:"#7a5000"},
+  {flag:"🇦🇲", name:"Ermənistan", bg:"#f0e8ff", color:"#4a1a80"},
+  {flag:"🇮🇷", name:"İran",       bg:"#e8f5e8", color:"#1a5a1a"},
+  {flag:"🇹🇷", name:"Türkiyə",    bg:"#fff0e6", color:"#8a3300"},
+];
+
+const AZ_FACTS = [
+  "Azərbaycan 'Od yurdu' adlanır — burada yeraltından təbii od çıxır! 🔥",
+  "Bakı — Azərbaycanın paytaxtı və ən böyük şəhəridir. 🌆",
+  "Xəzər dənizi — dünyanın ən böyük qapalı su hövzəsidir. 🌊",
+  "Azərbaycanda 9 iqlim qurşağından 8-i mövcuddur! 🌍",
+  "Azərbaycan Qafqazın ən böyük ölkəsidir! 🏆",
+];
+
+// Star polygon helper for flag SVG
+function starPts(cx, cy, R, r, n=8) {
+  const pts = [];
+  for (let i = 0; i < n * 2; i++) {
+    const radius = i % 2 === 0 ? R : r;
+    const angle = (Math.PI / n) * i - Math.PI / 2;
+    pts.push(`${(cx + radius * Math.cos(angle)).toFixed(2)},${(cy + radius * Math.sin(angle)).toFixed(2)}`);
+  }
+  return pts.join(" ");
+}
 
 // ─── GLOBAL CSS ─────────────────────────────────────────────────────────────
 const GlobalStyle = () => (
@@ -121,6 +235,7 @@ const GlobalStyle = () => (
     .cont-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:9px;margin:10px 0;}
     @media(max-width:480px){.cont-grid{grid-template-columns:1fr;}}
     .cont-card{border-radius:14px;padding:12px 13px;display:flex;align-items:flex-start;gap:10px;color:white;text-shadow:1px 1px 2px rgba(0,0,0,0.4);box-shadow:0 4px 14px rgba(0,0,0,0.2);cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
     .planet-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:11px;margin:10px 0;}
     @media(max-width:380px){.planet-grid{grid-template-columns:repeat(2,1fr);}}
     .planet-card{border-radius:16px;padding:13px 11px;color:white;cursor:pointer;transition:all 0.2s;text-shadow:1px 1px 3px rgba(0,0,0,0.5);border:3px solid transparent;}
@@ -141,6 +256,8 @@ const GlobalStyle = () => (
     .opt-btn{border-radius:10px;padding:9px 8px;font-size:0.88rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;text-align:center;transition:all 0.15s;width:100%;border:2px solid;}
     .opt-btn:not(:disabled):hover{opacity:0.85;transform:scale(1.02);}
     .ocean-item{display:flex;align-items:center;gap:11px;border-radius:12px;padding:10px 13px;margin-bottom:8px;border:2px solid;}
+    @media(max-width:520px){.water-bh-grid{grid-template-columns:1fr!important;}}
+    @media(max-width:480px){.attr3-grid{grid-template-columns:1fr!important;}.country-intro-grid{grid-template-columns:1fr!important;}}
     .info-box{background:#F8F9FA;border-radius:11px;padding:11px 14px;margin:9px 0;font-size:0.9rem;color:#444;line-height:1.7;border-left:5px solid #CCC;}
     .fun-fact{background:linear-gradient(135deg,#FFF9C4,#FFF3E0);border:2px solid #FFC107;border-radius:12px;padding:10px 13px;margin-top:11px;font-size:0.88rem;color:#5D4037;display:flex;align-items:flex-start;gap:7px;}
     .weeks-row{display:flex;gap:8px;flex-wrap:wrap;margin:11px 0;justify-content:center;}
@@ -563,11 +680,236 @@ function SectionKosmos() {
   );
 }
 
+// ─── SECTION: SULAR ────────────────────────────────────────────────────────
+function SectionSular() {
+  const [selWater, setSelWater] = useState(null);
+  const W_COLORS = { ocean:"#0277BD", sea:"#006a6a", lake:"#1a7a30", river:"#6a2fa0" };
+
+  return (
+    <div>
+      {/* Intro */}
+      <div className="card" style={{borderLeft:"6px solid #0277BD"}}>
+        <div className="sec-title" style={{color:"#0277BD"}}>💧 Su Növləri — 4 növ var!</div>
+        <p style={{fontSize:"0.97rem",color:"#444",marginBottom:12,lineHeight:1.7}}>
+          Dünyamızın <strong style={{color:"#0277BD"}}>70%-i su ilə örtülüdür!</strong> 🌍
+          Su 4 əsas növə bölünür: <strong>Okean, Dəniz, Göl, Çay</strong>.
+          Hər biri bir-birindən <strong>ölçüsünə, suyuna</strong> görə fərqlənir!
+        </p>
+
+        {/* Cards grid */}
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:10,marginBottom:16}}>
+          {WATER_TYPES.map((w,i)=>(
+            <div key={w.id}
+              onClick={()=>setSelWater(selWater===i?null:i)}
+              style={{
+                background:`${w.color}18`,
+                border:`2px solid ${selWater===i?w.color:w.color+"55"}`,
+                borderRadius:14,padding:"13px 12px",cursor:"pointer",
+                transform:selWater===i?"translateY(-3px)":"none",
+                transition:"all 0.2s",
+                boxShadow:selWater===i?`0 6px 18px ${w.color}44`:"0 2px 8px rgba(0,0,0,0.07)"
+              }}>
+              <div style={{fontSize:"2rem",marginBottom:6}}>{w.icon}</div>
+              <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"1rem",fontWeight:800,color:w.color,marginBottom:4}}>{w.name}</div>
+              <div style={{fontSize:"0.77rem",color:"#555",lineHeight:1.5,marginBottom:8}}>{w.short}</div>
+              <span style={{background:w.color,color:"white",borderRadius:20,padding:"2px 9px",fontSize:"0.62rem",fontWeight:800}}>{w.tag}</span>
+              <div style={{fontSize:"0.7rem",color:"#888",marginTop:6,fontWeight:700}}>👆 daha çox üçün bas</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Expanded detail */}
+        {selWater !== null && (()=>{
+          const w = WATER_TYPES[selWater];
+          return (
+            <div style={{background:`${w.color}12`,border:`2px solid ${w.color}66`,borderRadius:14,padding:"14px 13px",marginBottom:14,animation:"fadeIn 0.3s ease"}}>
+              <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"1.1rem",color:w.color,marginBottom:10,display:"flex",alignItems:"center",gap:8}}>
+                {w.icon} {w.name} haqqında ətraflı:
+              </div>
+              {w.facts.map((f,fi)=>(
+                <div key={fi} style={{display:"flex",gap:9,alignItems:"flex-start",marginBottom:7}}>
+                  <div style={{background:w.color,color:"white",borderRadius:"50%",width:20,height:20,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"0.65rem",fontWeight:900,flexShrink:0,marginTop:1}}>{fi+1}</div>
+                  <span style={{fontSize:"0.87rem",color:"#333",lineHeight:1.6,fontWeight:600}}>{f}</span>
+                </div>
+              ))}
+              <div style={{marginTop:10,padding:"8px 11px",background:"rgba(0,0,0,0.05)",borderRadius:10,fontSize:"0.8rem",color:"#555",fontWeight:700}}>
+                💡 <strong>Fərqi:</strong> {w.diff}
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* Differences table */}
+        <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"1rem",color:"#0277BD",marginBottom:8}}>🔍 Fərqlər Cədvəli</div>
+        {<div style={{fontSize:"0.7rem",color:"#90CAF9",textAlign:"center",marginBottom:5}}>← sürüşdürün →</div>}
+        <div className="table-scroll">
+          <table className="planet-table">
+            <thead>
+              <tr>{["Su növü","Ölçüsü","Duzu var?","Hərəkət?","Bizdə var?"].map(h=><th key={h}>{h}</th>)}</tr>
+            </thead>
+            <tbody>
+              {WATER_TYPES.map(w=>(
+                <tr key={w.id} onClick={()=>setSelWater(WATER_TYPES.findIndex(x=>x.id===w.id))}>
+                  <td style={{fontWeight:900,color:w.color}}>{w.icon} {w.name}</td>
+                  <td>{w.size}</td>
+                  <td>{w.salt}</td>
+                  <td>{w.move}</td>
+                  <td style={{fontWeight:800}}>{w.local}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <FunFact text="Çay suyu dağdan aşağı axır. Bir damla su dağdan dənizə çatmaq üçün yüzlərlə km yol keçir! 🏔️➡️🌊"/>
+      </div>
+
+      {/* Benefits & Harms */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}} className="water-bh-grid">
+        <div className="card" style={{borderLeft:"6px solid #2E7D32",marginBottom:0}}>
+          <div className="sec-title" style={{color:"#2E7D32",fontSize:"1rem"}}>😊 Faydaları</div>
+          {WATER_BENEFITS.map((b,i)=>(
+            <div key={i} style={{display:"flex",gap:9,alignItems:"flex-start",marginBottom:8}}>
+              <span style={{fontSize:"1.2rem",flexShrink:0}}>{b.icon}</span>
+              <span style={{fontSize:"0.82rem",color:"#333",lineHeight:1.5,fontWeight:600}}>{b.text}</span>
+            </div>
+          ))}
+        </div>
+        <div className="card" style={{borderLeft:"6px solid #C62828",marginBottom:0}}>
+          <div className="sec-title" style={{color:"#C62828",fontSize:"1rem"}}>⚠️ Zərərləri</div>
+          {WATER_HARMS.map((h,i)=>(
+            <div key={i} style={{display:"flex",gap:9,alignItems:"flex-start",marginBottom:8}}>
+              <span style={{fontSize:"1.2rem",flexShrink:0}}>{h.icon}</span>
+              <span style={{fontSize:"0.82rem",color:"#333",lineHeight:1.5,fontWeight:600}}>{h.text}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── SECTION: ÖLKƏM ────────────────────────────────────────────────────────
+function SectionOlkem() {
+  return (
+    <div>
+      {/* Dövlət & Sərhəd */}
+      <div className="card" style={{borderLeft:"6px solid #1565C0"}}>
+        <div className="sec-title" style={{color:"#1565C0"}}>🏛️ Dövlət və Sərhəd</div>
+
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:14}} className="country-intro-grid">
+          <div style={{background:"#E3F2FD",borderRadius:13,padding:"12px 13px",border:"2px solid #90CAF9"}}>
+            <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"0.98rem",color:"#1565C0",marginBottom:7}}>🏛️ Dövlət nədir?</div>
+            <p style={{fontSize:"0.82rem",color:"#333",lineHeight:1.7}}>
+              <strong>Dövlət</strong> — böyük bir ailə kimidir. Bir ərazidə yaşayan bütün insanları
+              idarə edir. Öz <strong>qaydaları</strong>, öz <strong>başçısı</strong> (prezident)
+              və öz <strong>bayrağı</strong> olur. 🏡
+              <br/><br/>
+              Dövlət məktəblər, xəstəxanalar, yollar tikir. Bizimçün qaydalar qoyur! 🏫🏥🛣️
+            </p>
+          </div>
+          <div style={{background:"#E8F5E9",borderRadius:13,padding:"12px 13px",border:"2px solid #A5D6A7"}}>
+            <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"0.98rem",color:"#2E7D32",marginBottom:7}}>🗺️ Sərhəd nədir?</div>
+            <p style={{fontSize:"0.82rem",color:"#333",lineHeight:1.7}}>
+              <strong>Sərhəd</strong> — bir ölkənin bitdiyi, başqa ölkənin başladığı xəttdir.
+              Xəritədə cizgi kimi görünür. Real həyatda isə <strong>keçid məntəqələri</strong> olur. 🛃
+              <br/><br/>
+              Xarici ölkəyə keçmək üçün mütləq <strong>pasport</strong> lazımdır! ✈️🛂
+            </p>
+          </div>
+        </div>
+
+        <InfoBox color="#1565C0">
+          📌 Azərbaycan Respublikasının prezidenti dövlət başçısıdır. 🏛️<br/>
+          📌 Hər dövlətin öz qanunları (qaydaları) var — hamı onlara riayət etməlidir. ⚖️<br/>
+          📌 Dövlət 3 sütun üzərində dayanır: <strong>Ərazi + Xalq + Hakimiyyət</strong>. 🏗️
+        </InfoBox>
+      </div>
+
+      {/* Azerbaijan flag + attributes */}
+      <div className="card" style={{borderLeft:"6px solid #EF3340"}}>
+        <div className="sec-title" style={{color:"#1a237e"}}>🇦🇿 Azərbaycan Respublikası!</div>
+        <p style={{fontSize:"0.9rem",color:"#555",marginBottom:14,lineHeight:1.7}}>
+          Bizim ölkəmizin adı <strong style={{color:"#0092BC"}}>Azərbaycan Respublikasıdır</strong>.
+          Paytaxtımız <strong style={{color:"#EF3340"}}>Bakı</strong> şəhəridir! 🌆
+          Hər dövlətin 3 rəsmi simvolu olur — bayraq, gerb, himnimiz.
+        </p>
+
+        {/* Flag SVG + legend */}
+        <div style={{display:"flex",flexWrap:"wrap",alignItems:"center",gap:20,marginBottom:16,justifyContent:"center"}}>
+          <div>
+            <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"0.95rem",color:"#333",marginBottom:8,textAlign:"center"}}>🚩 Azərbaycan Bayrağı</div>
+            <svg viewBox="0 0 300 180" width="192" height="115"
+              style={{display:"block",borderRadius:10,boxShadow:"0 6px 22px rgba(0,0,0,0.22)",border:"1px solid #ccc"}}>
+              {/* Stripes */}
+              <rect x="0" y="0"   width="300" height="60"  fill="#0092BC"/>
+              <rect x="0" y="60"  width="300" height="60"  fill="#EF3340"/>
+              <rect x="0" y="120" width="300" height="60"  fill="#509E2F"/>
+              {/* White crescent: large white circle minus offset circle = crescent */}
+              <circle cx="143" cy="90" r="22" fill="white"/>
+              <circle cx="152" cy="90" r="17" fill="#EF3340"/>
+              {/* White 8-pointed star */}
+              <polygon points={starPts(178, 90, 9, 3.8, 8)} fill="white"/>
+            </svg>
+          </div>
+          <div style={{flex:1,minWidth:160}}>
+            {[
+              {color:"#0092BC", label:"Mavi — göy üzü və azadlıq"},
+              {color:"#EF3340", label:"Qırmızı — cəsurluq, qəhrəmanlıq"},
+              {color:"#509E2F", label:"Yaşıl — torpaq, təbiət"},
+              {color:"white",   label:"Ay-Ulduz (ağ) — İslam dini", border:true},
+            ].map((item,i)=>(
+              <div key={i} style={{display:"flex",alignItems:"center",gap:9,marginBottom:8}}>
+                <div style={{width:18,height:18,borderRadius:"50%",background:item.color,flexShrink:0,border:item.border?"2px solid #ccc":"none"}}/>
+                <span style={{fontSize:"0.82rem",fontWeight:700,color:"#333"}}>{item.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 3 attributes */}
+        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:9,marginBottom:14}} className="attr3-grid">
+          {[
+            {icon:"🚩", title:"Bayraq", bg:"linear-gradient(135deg,#0092BC,#EF3340,#509E2F)", text:"3 rəngli — Mavi, Qırmızı, Yaşıl. Ortasında ağ Ay-Ulduz."},
+            {icon:"🛡️", title:"Gerb", bg:"linear-gradient(135deg,#BF8500,#F5C130)", text:"Dövlət nişanıdır. Sənədlər, pul, rəsmi yerlər üzərindədir."},
+            {icon:"🎵", title:"Himnimiz", bg:"linear-gradient(135deg,#4a1a8a,#9b59b6)", text:"\"Azərbaycan!\" mahnısı. Bayramlarda ayağa qalxıb dinləyirik! 🎶"},
+          ].map((a,i)=>(
+            <div key={i} style={{background:a.bg,borderRadius:13,padding:"13px 10px",color:"white",textAlign:"center",boxShadow:"0 4px 0 rgba(0,0,0,0.2)"}}>
+              <div style={{fontSize:"2rem",marginBottom:5}}>{a.icon}</div>
+              <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"0.95rem",marginBottom:5}}>{a.title}</div>
+              <div style={{fontSize:"0.73rem",opacity:0.9,lineHeight:1.5}}>{a.text}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Neighbours */}
+        <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"0.98rem",color:"#333",marginBottom:8}}>🌍 5 Qonşu Ölkəmiz</div>
+        <div style={{display:"flex",flexWrap:"wrap",gap:7,marginBottom:14}}>
+          {AZ_NEIGHBOURS.map(n=>(
+            <div key={n.name} style={{display:"flex",alignItems:"center",gap:7,background:n.bg,color:n.color,borderRadius:30,padding:"7px 14px",fontWeight:800,fontSize:"0.85rem"}}>
+              <span style={{fontSize:"1.2rem"}}>{n.flag}</span>{n.name}
+            </div>
+          ))}
+        </div>
+
+        {/* Fun facts */}
+        <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"0.98rem",color:"#333",marginBottom:8}}>⭐ Maraqlı Faktlar</div>
+        {AZ_FACTS.map((f,i)=>(
+          <div key={i} style={{display:"flex",gap:9,alignItems:"flex-start",marginBottom:8,background:"linear-gradient(135deg,#FFF9C4,#FFF3E0)",borderRadius:10,padding:"8px 11px",border:"1px solid #FFC107"}}>
+            <span style={{fontSize:"1rem",flexShrink:0}}>⭐</span>
+            <span style={{fontSize:"0.83rem",color:"#5D4037",fontWeight:700}}>{f}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── MAIN APP ──────────────────────────────────────────────────────────────
 const TABS = [
   {id:"aylar",label:"📅 Aylar"},{id:"hefteler",label:"📆 Həftələr"},
   {id:"gunler",label:"🗓️ Günlər"},{id:"materikler",label:"🌍 Materiklər"},
-  {id:"okeanlar",label:"🌊 Okeanlar"},{id:"kosmos",label:"🚀 Kosmos"},
+  {id:"okeanlar",label:"🌊 Okeanlar"},{id:"sular",label:"💧 Sular"},
+  {id:"olkem",label:"🇦🇿 Ölkəm"},{id:"kosmos",label:"🚀 Kosmos"},
   {id:"test",label:"🎯 Test"},
 ];
 
@@ -581,8 +923,8 @@ export default function App() {
       <div className="wrap">
         <div className="app-header">
           <div style={{fontSize:"1.7rem",letterSpacing:5,marginBottom:6}}>⭐ 🌟 ⭐</div>
-          <h1 className="app-h1">🎒 Mehinin dərsi 🎒</h1>
-          <p className="app-sub">Sevimli Mehin, gəl birlikdə öyrənək! 📚</p>
+          <h1 className="app-h1">🎒 Məktəbə Hazırlıq 🎒</h1>
+          <p className="app-sub">Sevimli şagird, gəl birlikdə öyrənək! 📚</p>
         </div>
         <nav className="nav">
           {TABS.map(t=>(
@@ -596,6 +938,8 @@ export default function App() {
         {tab==="gunler"     && <SectionGunler/>}
         {tab==="materikler" && <SectionMateriklər/>}
         {tab==="okeanlar"   && <SectionOkeanlar/>}
+        {tab==="sular"      && <SectionSular/>}
+        {tab==="olkem"      && <SectionOlkem/>}
         {tab==="kosmos"     && <SectionKosmos/>}
         {tab==="test"       && <Quiz/>}
       </div>
