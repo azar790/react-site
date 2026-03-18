@@ -99,12 +99,12 @@ const QUIZ_QUESTIONS = [
   { id:24, topic:"💧 Sular",  q:"Çay suyu necədir?",                        opts:["Duzlu","Şirin","Qaynar","Donmuş"],                       ans:"Şirin" },
   { id:25, topic:"💧 Sular",  q:"Azərbaycandakı dənizin adı nədir?",        opts:["Qara dəniz","Aral","Xəzər dənizi","Hind okeanı"],        ans:"Xəzər dənizi" },
   { id:26, topic:"💧 Sular",  q:"Neçə əsas su hövzəsi növü var?",           opts:["2","3","4","5"],                                         ans:"4" },
-  { id:27, topic:"🇦🇿 Ölkəm", q:"Azərbaycan bayrağında neçə rəng var?",     opts:["2","3","4","5"],                                         ans:"3" },
-  { id:28, topic:"🇦🇿 Ölkəm", q:"Azərbaycanın paytaxtı hansıdır?",          opts:["Gəncə","Sumqayıt","Bakı","Lənkəran"],                    ans:"Bakı" },
-  { id:29, topic:"🇦🇿 Ölkəm", q:"Azərbaycanın neçə qonşusu var?",           opts:["3","4","5","6"],                                         ans:"5" },
-  { id:30, topic:"🇦🇿 Ölkəm", q:"Dövlətin 3 əsas simvolu hansıdır?",        opts:["Pul+Dil+Bayraq","Bayraq+Gerb+Himn","Prezident+Gerb+Himn","Xəritə+Himn+Gerb"], ans:"Bayraq+Gerb+Himn" },
-  { id:31, topic:"🇦🇿 Ölkəm", q:"Azərbaycan bayrağının rəngləri?",          opts:["Sarı-Qırmızı-Yaşıl","Mavi-Qırmızı-Yaşıl","Ağ-Mavi-Qırmızı","Qırmızı-Sarı-Yaşıl"], ans:"Mavi-Qırmızı-Yaşıl" },
-  { id:32, topic:"🇦🇿 Ölkəm", q:"Sərhədi keçmək üçün nə lazımdır?",        opts:["Pul","Pasport","Bilet","Telefon"],                        ans:"Pasport" },
+  { id:27, topic:"Ölkəm", q:"Azərbaycan bayrağında neçə rəng var?",     opts:["2","3","4","5"],                                         ans:"3" },
+  { id:28, topic:"Ölkəm", q:"Azərbaycanın paytaxtı hansıdır?",          opts:["Gəncə","Sumqayıt","Bakı","Lənkəran"],                    ans:"Bakı" },
+  { id:29, topic:"Ölkəm", q:"Azərbaycanın neçə qonşusu var?",           opts:["3","4","5","6"],                                         ans:"5" },
+  { id:30, topic:"Ölkəm", q:"Dövlətin 3 əsas simvolu hansıdır?",        opts:["Pul+Dil+Bayraq","Bayraq+Gerb+Himn","Prezident+Gerb+Himn","Xəritə+Himn+Gerb"], ans:"Bayraq+Gerb+Himn" },
+  { id:31, topic:"Ölkəm", q:"Azərbaycan bayrağının rəngləri?",          opts:["Sarı-Qırmızı-Yaşıl","Mavi-Qırmızı-Yaşıl","Ağ-Mavi-Qırmızı","Qırmızı-Sarı-Yaşıl"], ans:"Mavi-Qırmızı-Yaşıl" },
+  { id:32, topic:"Ölkəm", q:"Sərhədi keçmək üçün nə lazımdır?",        opts:["Pul","Pasport","Bilet","Telefon"],                        ans:"Pasport" },
 ];
 
 // ─── WATER & COUNTRY DATA ───────────────────────────────────────────────────
@@ -882,13 +882,163 @@ function SectionOlkem() {
   );
 }
 
+// ─── COMBINED: TƏQVIM (Aylar + Həftələr + Günlər) ──────────────────────────
+function SectionTeqvim() {
+  const [subTab, setSubTab] = useState("aylar");
+  const subTabs = [
+    {id:"aylar",  label:"📅 Aylar"},
+    {id:"hefteler",label:"📆 Həftələr"},
+    {id:"gunler", label:"🗓️ Günlər"},
+  ];
+  return (
+    <div>
+      <div style={{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"center",marginBottom:16}}>
+        {subTabs.map(s=>(
+          <button key={s.id} onClick={()=>setSubTab(s.id)} style={{
+            background:subTab===s.id?"linear-gradient(135deg,#6A1B9A,#AB47BC)":"rgba(255,255,255,0.12)",
+            color:subTab===s.id?"white":"#E3F2FD",
+            border:`2px solid ${subTab===s.id?"#AB47BC":"rgba(255,255,255,0.25)"}`,
+            borderRadius:30,padding:"7px 16px",fontSize:"0.85rem",fontWeight:800,
+            cursor:"pointer",fontFamily:"'Nunito',sans-serif",whiteSpace:"nowrap",
+            boxShadow:subTab===s.id?"0 4px 14px rgba(171,71,188,0.4)":"none",
+            transition:"all 0.2s",
+          }}>{s.label}</button>
+        ))}
+      </div>
+      {subTab==="aylar"    && <SectionAylar/>}
+      {subTab==="hefteler" && <SectionHefteler/>}
+      {subTab==="gunler"   && <SectionGunler/>}
+    </div>
+  );
+}
+
+// ─── COMBINED SULAR + OKEANLAR ─────────────────────────────────────────────
+function SectionSularVeOkeanlar() {
+  const [selWater, setSelWater] = useState(null);
+  const [subTab, setSubTab] = useState("sular");
+  const subTabs = [
+    {id:"sular",   label:"💧 Su Növləri"},
+    {id:"okeanlar",label:"🌊 Okeanlar"},
+  ];
+
+  return (
+    <div>
+      <div style={{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"center",marginBottom:16}}>
+        {subTabs.map(s=>(
+          <button key={s.id} onClick={()=>setSubTab(s.id)} style={{
+            background:subTab===s.id?"linear-gradient(135deg,#0277BD,#0288D1)":"rgba(255,255,255,0.12)",
+            color:subTab===s.id?"white":"#E3F2FD",
+            border:`2px solid ${subTab===s.id?"#0288D1":"rgba(255,255,255,0.25)"}`,
+            borderRadius:30,padding:"7px 16px",fontSize:"0.85rem",fontWeight:800,
+            cursor:"pointer",fontFamily:"'Nunito',sans-serif",whiteSpace:"nowrap",
+            boxShadow:subTab===s.id?"0 4px 14px rgba(2,119,189,0.4)":"none",
+            transition:"all 0.2s",
+          }}>{s.label}</button>
+        ))}
+      </div>
+
+      {subTab==="sular" && (
+        <div>
+          <div className="card" style={{borderLeft:"6px solid #0277BD"}}>
+            <div className="sec-title" style={{color:"#0277BD"}}>💧 Su Növləri — 4 növ var!</div>
+            <p style={{fontSize:"0.97rem",color:"#444",marginBottom:12,lineHeight:1.7}}>
+              Dünyamızın <strong style={{color:"#0277BD"}}>70%-i su ilə örtülüdür!</strong> 🌍
+              Su 4 əsas növə bölünür: <strong>Okean, Dəniz, Göl, Çay</strong>.
+              Hər biri bir-birindən <strong>ölçüsünə, suyuna</strong> görə fərqlənir!
+            </p>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:10,marginBottom:16}}>
+              {WATER_TYPES.map((w,i)=>(
+                <div key={w.id} onClick={()=>setSelWater(selWater===i?null:i)} style={{
+                  background:`${w.color}18`,
+                  border:`2px solid ${selWater===i?w.color:w.color+"55"}`,
+                  borderRadius:14,padding:"13px 12px",cursor:"pointer",
+                  transform:selWater===i?"translateY(-3px)":"none",
+                  transition:"all 0.2s",
+                  boxShadow:selWater===i?`0 6px 18px ${w.color}44`:"0 2px 8px rgba(0,0,0,0.07)"
+                }}>
+                  <div style={{fontSize:"2rem",marginBottom:6}}>{w.icon}</div>
+                  <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"1rem",fontWeight:800,color:w.color,marginBottom:4}}>{w.name}</div>
+                  <div style={{fontSize:"0.77rem",color:"#555",lineHeight:1.5,marginBottom:8}}>{w.short}</div>
+                  <span style={{background:w.color,color:"white",borderRadius:20,padding:"2px 9px",fontSize:"0.62rem",fontWeight:800}}>{w.tag}</span>
+                  <div style={{fontSize:"0.7rem",color:"#888",marginTop:6,fontWeight:700}}>👆 daha çox üçün bas</div>
+                </div>
+              ))}
+            </div>
+            {selWater !== null && (()=>{
+              const w = WATER_TYPES[selWater];
+              return (
+                <div style={{background:`${w.color}12`,border:`2px solid ${w.color}66`,borderRadius:14,padding:"14px 13px",marginBottom:14,animation:"fadeIn 0.3s ease"}}>
+                  <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"1.1rem",color:w.color,marginBottom:10,display:"flex",alignItems:"center",gap:8}}>
+                    {w.icon} {w.name} haqqında ətraflı:
+                  </div>
+                  {w.facts.map((f,fi)=>(
+                    <div key={fi} style={{display:"flex",gap:9,alignItems:"flex-start",marginBottom:7}}>
+                      <div style={{background:w.color,color:"white",borderRadius:"50%",width:20,height:20,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"0.65rem",fontWeight:900,flexShrink:0,marginTop:1}}>{fi+1}</div>
+                      <span style={{fontSize:"0.87rem",color:"#333",lineHeight:1.6,fontWeight:600}}>{f}</span>
+                    </div>
+                  ))}
+                  <div style={{marginTop:10,padding:"8px 11px",background:"rgba(0,0,0,0.05)",borderRadius:10,fontSize:"0.8rem",color:"#555",fontWeight:700}}>
+                    💡 <strong>Fərqi:</strong> {w.diff}
+                  </div>
+                </div>
+              );
+            })()}
+            <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"1rem",color:"#0277BD",marginBottom:8}}>🔍 Fərqlər Cədvəli</div>
+            <div style={{fontSize:"0.7rem",color:"#90CAF9",textAlign:"center",marginBottom:5}}>← sürüşdürün →</div>
+            <div className="table-scroll">
+              <table className="planet-table">
+                <thead>
+                  <tr>{["Su növü","Ölçüsü","Duzu var?","Hərəkət?","Bizdə var?"].map(h=><th key={h}>{h}</th>)}</tr>
+                </thead>
+                <tbody>
+                  {WATER_TYPES.map(w=>(
+                    <tr key={w.id} onClick={()=>setSelWater(WATER_TYPES.findIndex(x=>x.id===w.id))}>
+                      <td style={{fontWeight:900,color:w.color}}>{w.icon} {w.name}</td>
+                      <td>{w.size}</td><td>{w.salt}</td><td>{w.move}</td>
+                      <td style={{fontWeight:800}}>{w.local}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <FunFact text="Çay suyu dağdan aşağı axır. Bir damla su dağdan dənizə çatmaq üçün yüzlərlə km yol keçir! 🏔️➡️🌊"/>
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}} className="water-bh-grid">
+            <div className="card" style={{borderLeft:"6px solid #2E7D32",marginBottom:0}}>
+              <div className="sec-title" style={{color:"#2E7D32",fontSize:"1rem"}}>😊 Faydaları</div>
+              {WATER_BENEFITS.map((b,i)=>(
+                <div key={i} style={{display:"flex",gap:9,alignItems:"flex-start",marginBottom:8}}>
+                  <span style={{fontSize:"1.2rem",flexShrink:0}}>{b.icon}</span>
+                  <span style={{fontSize:"0.82rem",color:"#333",lineHeight:1.5,fontWeight:600}}>{b.text}</span>
+                </div>
+              ))}
+            </div>
+            <div className="card" style={{borderLeft:"6px solid #C62828",marginBottom:0}}>
+              <div className="sec-title" style={{color:"#C62828",fontSize:"1rem"}}>⚠️ Zərərləri</div>
+              {WATER_HARMS.map((h,i)=>(
+                <div key={i} style={{display:"flex",gap:9,alignItems:"flex-start",marginBottom:8}}>
+                  <span style={{fontSize:"1.2rem",flexShrink:0}}>{h.icon}</span>
+                  <span style={{fontSize:"0.82rem",color:"#333",lineHeight:1.5,fontWeight:600}}>{h.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {subTab==="okeanlar" && <SectionOkeanlar/>}
+    </div>
+  );
+}
+
 // ─── MAIN APP ──────────────────────────────────────────────────────────────
 const TABS = [
-  {id:"olkem",label:" Ölkəm"},{id:"sular",label:"💧 Sular"},
-  {id:"aylar",label:"📅 Aylar"},{id:"hefteler",label:"📆 Həftələr"},
-  {id:"gunler",label:"🗓️ Günlər"},{id:"materikler",label:"🌍 Materiklər"},
-  {id:"okeanlar",label:"🌊 Okeanlar"},{id:"kosmos",label:"🚀 Kosmos"},
-  {id:"test",label:"🎯 Test"},
+  {id:"olkem",    label:"Ölkəm"},
+  {id:"sular",    label:"💧 Sular & Okeanlar"},
+  {id:"teqvim",   label:"📅 Təqvim"},
+  {id:"materikler",label:"🌍 Materiklər"},
+  {id:"kosmos",   label:"🚀 Kosmos"},
+  {id:"test",     label:"🎯 Test"},
 ];
 
 export default function App() {
@@ -911,12 +1061,9 @@ export default function App() {
               onClick={()=>setTab(t.id)}>{t.label}</button>
           ))}
         </nav>
-        {tab==="aylar"      && <SectionAylar/>}
-        {tab==="hefteler"   && <SectionHefteler/>}
-        {tab==="gunler"     && <SectionGunler/>}
+        {tab==="teqvim"     && <SectionTeqvim/>}
         {tab==="materikler" && <SectionMateriklər/>}
-        {tab==="okeanlar"   && <SectionOkeanlar/>}
-        {tab==="sular"      && <SectionSular/>}
+        {tab==="sular"      && <SectionSularVeOkeanlar/>}
         {tab==="olkem"      && <SectionOlkem/>}
         {tab==="kosmos"     && <SectionKosmos/>}
         {tab==="test"       && <Quiz/>}
