@@ -197,7 +197,6 @@ const AZ_FACTS = [
   "Azərbaycan Qafqazın ən böyük ölkəsidir! 🏆",
 ];
 
-// Star polygon helper for flag SVG
 function starPts(cx, cy, R, r, n=8) {
   const pts = [];
   for (let i = 0; i < n * 2; i++) {
@@ -272,7 +271,6 @@ const GlobalStyle = () => (
   `}</style>
 );
 
-// ─── SMALL COMPONENTS ──────────────────────────────────────────────────────
 const FunFact = ({ text }) => (
   <div className="fun-fact">
     <span style={{fontSize:"1.2rem",flexShrink:0}}>💡</span>
@@ -336,7 +334,6 @@ function PlanetDetail({ p }) {
   );
 }
 
-// ─── QUIZ ──────────────────────────────────────────────────────────────────
 function Quiz() {
   const [answers, setAnswers] = useState({});
   const [showResult, setShowResult] = useState(false);
@@ -443,7 +440,6 @@ function Quiz() {
   );
 }
 
-// ─── SECTIONS ──────────────────────────────────────────────────────────────
 function SectionAylar() {
   return (
     <div className="card">
@@ -679,14 +675,11 @@ function SectionKosmos() {
   );
 }
 
-// ─── SECTION: SULAR ────────────────────────────────────────────────────────
 function SectionSular() {
   const [selWater, setSelWater] = useState(null);
-  const W_COLORS = { ocean:"#0277BD", sea:"#006a6a", lake:"#1a7a30", river:"#6a2fa0" };
 
   return (
     <div>
-      {/* Intro */}
       <div className="card" style={{borderLeft:"6px solid #0277BD"}}>
         <div className="sec-title" style={{color:"#0277BD"}}>💧 Su Növləri — 4 növ var!</div>
         <p style={{fontSize:"0.97rem",color:"#444",marginBottom:12,lineHeight:1.7}}>
@@ -695,7 +688,6 @@ function SectionSular() {
           Hər biri bir-birindən <strong>ölçüsünə, suyuna</strong> görə fərqlənir!
         </p>
 
-        {/* Cards grid */}
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:10,marginBottom:16}}>
           {WATER_TYPES.map((w,i)=>(
             <div key={w.id}
@@ -717,7 +709,6 @@ function SectionSular() {
           ))}
         </div>
 
-        {/* Expanded detail */}
         {selWater !== null && (()=>{
           const w = WATER_TYPES[selWater];
           return (
@@ -738,9 +729,8 @@ function SectionSular() {
           );
         })()}
 
-        {/* Differences table */}
         <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"1rem",color:"#0277BD",marginBottom:8}}>🔍 Fərqlər Cədvəli</div>
-        {<div style={{fontSize:"0.7rem",color:"#90CAF9",textAlign:"center",marginBottom:5}}>← sürüşdürün →</div>}
+        <div style={{fontSize:"0.7rem",color:"#90CAF9",textAlign:"center",marginBottom:5}}>← sürüşdürün →</div>
         <div className="table-scroll">
           <table className="planet-table">
             <thead>
@@ -762,7 +752,6 @@ function SectionSular() {
         <FunFact text="Çay suyu dağdan aşağı axır. Bir damla su dağdan dənizə çatmaq üçün yüzlərlə km yol keçir! 🏔️➡️🌊"/>
       </div>
 
-      {/* Benefits & Harms */}
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}} className="water-bh-grid">
         <div className="card" style={{borderLeft:"6px solid #2E7D32",marginBottom:0}}>
           <div className="sec-title" style={{color:"#2E7D32",fontSize:"1rem"}}>😊 Faydaları</div>
@@ -787,11 +776,9 @@ function SectionSular() {
   );
 }
 
-// ─── SECTION: ÖLKƏM ────────────────────────────────────────────────────────
 function SectionOlkem() {
   return (
     <div>
-      {/* Dövlət & Sərhəd */}
       <div className="card" style={{borderLeft:"6px solid #1565C0"}}>
         <div className="sec-title" style={{color:"#1565C0"}}>🏛️ Dövlət və Sərhəd</div>
 
@@ -824,29 +811,24 @@ function SectionOlkem() {
         </InfoBox>
       </div>
 
-      {/* Azerbaijan flag + attributes */}
       <div className="card" style={{borderLeft:"6px solid #EF3340"}}>
-        <div className="sec-title" style={{color:"#1a237e"}}>Azərbaycan Respublikası!</div>
+        <div className="sec-title" style={{color:"#1a237e"}}>🇦🇿 Azərbaycan Respublikası!</div>
         <p style={{fontSize:"0.9rem",color:"#555",marginBottom:14,lineHeight:1.7}}>
           Bizim ölkəmizin adı <strong style={{color:"#0092BC"}}>Azərbaycan Respublikasıdır</strong>.
           Paytaxtımız <strong style={{color:"#EF3340"}}>Bakı</strong> şəhəridir! 🌆
           Hər dövlətin 3 rəsmi simvolu olur — bayraq, gerb, himnimiz.
         </p>
 
-        {/* Flag SVG + legend */}
         <div style={{display:"flex",flexWrap:"wrap",alignItems:"center",gap:20,marginBottom:16,justifyContent:"center"}}>
           <div>
             <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"0.95rem",color:"#333",marginBottom:8,textAlign:"center"}}>🚩 Azərbaycan Bayrağı</div>
             <svg viewBox="0 0 300 180" width="192" height="115"
               style={{display:"block",borderRadius:10,boxShadow:"0 6px 22px rgba(0,0,0,0.22)",border:"1px solid #ccc"}}>
-              {/* Stripes */}
               <rect x="0" y="0"   width="300" height="60"  fill="#0092BC"/>
               <rect x="0" y="60"  width="300" height="60"  fill="#EF3340"/>
               <rect x="0" y="120" width="300" height="60"  fill="#509E2F"/>
-              {/* White crescent: large white circle minus offset circle = crescent */}
               <circle cx="143" cy="90" r="22" fill="white"/>
               <circle cx="152" cy="90" r="17" fill="#EF3340"/>
-              {/* White 8-pointed star */}
               <polygon points={starPts(178, 90, 9, 3.8, 8)} fill="white"/>
             </svg>
           </div>
@@ -865,7 +847,6 @@ function SectionOlkem() {
           </div>
         </div>
 
-        {/* 3 attributes */}
         <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:9,marginBottom:14}} className="attr3-grid">
           {[
             {icon:"🚩", title:"Bayraq", bg:"linear-gradient(135deg,#0092BC,#EF3340,#509E2F)", text:"3 rəngli — Mavi, Qırmızı, Yaşıl. Ortasında ağ Ay-Ulduz."},
@@ -880,7 +861,6 @@ function SectionOlkem() {
           ))}
         </div>
 
-        {/* Neighbours */}
         <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"0.98rem",color:"#333",marginBottom:8}}>🌍 5 Qonşu Ölkəmiz</div>
         <div style={{display:"flex",flexWrap:"wrap",gap:7,marginBottom:14}}>
           {AZ_NEIGHBOURS.map(n=>(
@@ -890,7 +870,6 @@ function SectionOlkem() {
           ))}
         </div>
 
-        {/* Fun facts */}
         <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"0.98rem",color:"#333",marginBottom:8}}>⭐ Maraqlı Faktlar</div>
         {AZ_FACTS.map((f,i)=>(
           <div key={i} style={{display:"flex",gap:9,alignItems:"flex-start",marginBottom:8,background:"linear-gradient(135deg,#FFF9C4,#FFF3E0)",borderRadius:10,padding:"8px 11px",border:"1px solid #FFC107"}}>
@@ -905,15 +884,15 @@ function SectionOlkem() {
 
 // ─── MAIN APP ──────────────────────────────────────────────────────────────
 const TABS = [
+  {id:"olkem",label:" Ölkəm"},{id:"sular",label:"💧 Sular"},
   {id:"aylar",label:"📅 Aylar"},{id:"hefteler",label:"📆 Həftələr"},
   {id:"gunler",label:"🗓️ Günlər"},{id:"materikler",label:"🌍 Materiklər"},
-  {id:"okeanlar",label:"🌊 Okeanlar"},{id:"sular",label:"💧 Sular"},
-  {id:"olkem",label:"Ölkəm"},{id:"kosmos",label:"🚀 Kosmos"},
+  {id:"okeanlar",label:"🌊 Okeanlar"},{id:"kosmos",label:"🚀 Kosmos"},
   {id:"test",label:"🎯 Test"},
 ];
 
 export default function App() {
-  const [tab, setTab] = useState("aylar");
+  const [tab, setTab] = useState("olkem");
   return (
     <div className="app">
       <GlobalStyle/>
