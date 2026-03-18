@@ -184,17 +184,16 @@ const WATER_HARMS = [
 
 const AZ_NEIGHBOURS = [
   {flag:"", name:"Rusiya",     bg:"#ffeaea", color:"#8a0000"},
-  {flag:"🇬🇪", name:"Gürcüstan",  bg:"#fff6e0", color:"#7a5000"},
-  {flag:"🇦🇲", name:"Ermənistan", bg:"#f0e8ff", color:"#4a1a80"},
-  {flag:"🇮🇷", name:"İran",       bg:"#e8f5e8", color:"#1a5a1a"},
-  {flag:"🇹🇷", name:"Türkiyə",    bg:"#fff0e6", color:"#8a3300"},
+  {flag:"", name:"Gürcüstan",  bg:"#fff6e0", color:"#7a5000"},
+  {flag:"", name:"Ermənistan", bg:"#f0e8ff", color:"#4a1a80"},
+  {flag:"", name:"İran",       bg:"#e8f5e8", color:"#1a5a1a"},
+  {flag:"", name:"Türkiyə",    bg:"#fff0e6", color:"#8a3300"},
 ];
 
 const AZ_FACTS = [
-  "Azərbaycan 'Od yurdu' adlanır — burada yeraltından təbii od çıxır! 🔥",
+  "Azərbaycan 'Odlar yurdu' adlanır — səbəbi yanan təbii qaz mənbələri ilə məşhur olmasıdır. 🔥",
   "Bakı — Azərbaycanın paytaxtı və ən böyük şəhəridir. 🌆",
-  "Xəzər dənizi — dünyanın ən böyük qapalı su hövzəsidir. 🌊",
-  "Azərbaycanda 9 iqlim qurşağından 8-i mövcuddur! 🌍",
+  "Xəzər dənizi — dünyanın ən böyük gölüdür. 🌊",
   "Azərbaycan Qafqazın ən böyük ölkəsidir! 🏆",
 ];
 
@@ -827,7 +826,7 @@ function SectionOlkem() {
 
       {/* Azerbaijan flag + attributes */}
       <div className="card" style={{borderLeft:"6px solid #EF3340"}}>
-        <div className="sec-title" style={{color:"#1a237e"}}>🇦🇿 Azərbaycan Respublikası!</div>
+        <div className="sec-title" style={{color:"#1a237e"}}>Azərbaycan Respublikası!</div>
         <p style={{fontSize:"0.9rem",color:"#555",marginBottom:14,lineHeight:1.7}}>
           Bizim ölkəmizin adı <strong style={{color:"#0092BC"}}>Azərbaycan Respublikasıdır</strong>.
           Paytaxtımız <strong style={{color:"#EF3340"}}>Bakı</strong> şəhəridir! 🌆
@@ -909,7 +908,7 @@ const TABS = [
   {id:"aylar",label:"📅 Aylar"},{id:"hefteler",label:"📆 Həftələr"},
   {id:"gunler",label:"🗓️ Günlər"},{id:"materikler",label:"🌍 Materiklər"},
   {id:"okeanlar",label:"🌊 Okeanlar"},{id:"sular",label:"💧 Sular"},
-  {id:"olkem",label:"🇦🇿 Ölkəm"},{id:"kosmos",label:"🚀 Kosmos"},
+  {id:"olkem",label:"Ölkəm"},{id:"kosmos",label:"🚀 Kosmos"},
   {id:"test",label:"🎯 Test"},
 ];
 
