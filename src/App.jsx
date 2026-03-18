@@ -853,9 +853,9 @@ function SectionOlkem() {
           </div>
           <div style={{flex:1,minWidth:160}}>
             {[
-              {color:"#0092BC", label:"Mavi — göy üzü və azadlıq"},
-              {color:"#EF3340", label:"Qırmızı — cəsurluq, qəhrəmanlıq"},
-              {color:"#509E2F", label:"Yaşıl — torpaq, təbiət"},
+              {color:"#0092BC", label:"Mavi — türkçülüyü"},
+              {color:"#EF3340", label:"Qırmızı — müasirliyi"},
+              {color:"#509E2F", label:"Yaşıl — islamı"},
               {color:"white",   label:"Ay-Ulduz (ağ) — İslam dini", border:true},
             ].map((item,i)=>(
               <div key={i} style={{display:"flex",alignItems:"center",gap:9,marginBottom:8}}>
