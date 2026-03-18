@@ -1,4 +1,145 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+
+// ─── SOUND ─────────────────────────────────────────────────────────────────
+function playCorrectSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.12);
+      gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.12);
+      gain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + i * 0.12 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.12 + 0.35);
+      osc.start(ctx.currentTime + i * 0.12);
+      osc.stop(ctx.currentTime + i * 0.12 + 0.4);
+    });
+  } catch (e) {}
+}
+
+function playVictorySound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    // Fanfare melody: C5 E5 G5 C6 — triumphant ascending
+    const notes = [
+      { freq: 523.25, t: 0.00, dur: 0.18 },   // C5
+      { freq: 659.25, t: 0.18, dur: 0.18 },   // E5
+      { freq: 783.99, t: 0.36, dur: 0.18 },   // G5
+      { freq: 1046.5, t: 0.54, dur: 0.45 },   // C6 (held)
+      { freq: 783.99, t: 0.54, dur: 0.45 },   // G5 harmony
+      { freq: 659.25, t: 0.54, dur: 0.45 },   // E5 harmony
+    ];
+    notes.forEach(({ freq, t, dur }) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + t);
+      gain.gain.setValueAtTime(0, ctx.currentTime + t);
+      gain.gain.linearRampToValueAtTime(0.22, ctx.currentTime + t + 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + dur);
+      osc.start(ctx.currentTime + t);
+      osc.stop(ctx.currentTime + t + dur + 0.05);
+    });
+    // Add a little drum hit at start
+    const bufSize = ctx.sampleRate * 0.3;
+    const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufSize, 4);
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    const drumGain = ctx.createGain();
+    drumGain.gain.setValueAtTime(0.3, ctx.currentTime);
+    src.connect(drumGain);
+    drumGain.connect(ctx.destination);
+    src.start(ctx.currentTime);
+  } catch (e) {}
+}
+
+function playWrongSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "sawtooth";
+    osc.frequency.setValueAtTime(220, ctx.currentTime);
+    osc.frequency.linearRampToValueAtTime(160, ctx.currentTime + 0.25);
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.35);
+  } catch (e) {}
+}
+
+// ─── CELEBRATION STARS ──────────────────────────────────────────────────────
+function Celebration({ show }) {
+  const [stars, setStars] = useState([]);
+
+  useEffect(() => {
+    if (!show) return;
+    const emojis = ["⭐", "🌟", "✨", "💫", "🎉", "🏆", "🎊", "⭐", "🌟", "✨"];
+    const newStars = Array.from({ length: 60 }, (_, i) => ({
+      id: i,
+      emoji: emojis[Math.floor(Math.random() * emojis.length)],
+      left: Math.random() * 100,
+      delay: Math.random() * 2.5,
+      duration: 2.5 + Math.random() * 2,
+      size: 1 + Math.random() * 1.5,
+      swing: (Math.random() - 0.5) * 60,
+    }));
+    setStars(newStars);
+    const timer = setTimeout(() => setStars([]), 6000);
+    return () => clearTimeout(timer);
+  }, [show]);
+
+  if (!stars.length) return null;
+
+  return (
+    <>
+      <style>{`
+        @keyframes starFall {
+          0%   { transform: translateY(-60px) rotate(0deg); opacity: 1; }
+          80%  { opacity: 1; }
+          100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+        @keyframes swing {
+          0%,100% { margin-left: 0; }
+          50%      { margin-left: var(--swing); }
+        }
+        .celeb-star {
+          position: fixed;
+          top: 0;
+          pointer-events: none;
+          z-index: 9999;
+          animation: starFall var(--dur) var(--delay) linear forwards;
+          line-height: 1;
+        }
+      `}</style>
+      {stars.map(s => (
+        <div
+          key={s.id}
+          className="celeb-star"
+          style={{
+            left: `${s.left}%`,
+            fontSize: `${s.size}rem`,
+            "--dur": `${s.duration}s`,
+            "--delay": `${s.delay}s`,
+            "--swing": `${s.swing}px`,
+          }}
+        >
+          {s.emoji}
+        </div>
+      ))}
+    </>
+  );
+}
 
 // ─── RESPONSIVE HOOK ───────────────────────────────────────────────────────
 function useWidth() {
@@ -162,87 +303,86 @@ const MATH_SUB = [
   { id:24, q:"X - 12 = 9", sub:"X = ?", opts:["18","19","20","21"], ans:"21" },
   { id:25, q:"33 - X = 23", sub:"X = ?", opts:["9","10","11","12"], ans:"10" },
 ];
-  
+
 const MATH_MUL = [
-  { id:1,  q:"X × 3 = 21", sub:"X = ?",                opts:["5","6","7","8"],                                         ans:"7" },
-  { id:2,  q:"5 × X = 40", sub:"X = ?",                opts:["6","7","8","9"],                                         ans:"8" },
-  { id:3,  q:"X × 4 = 32", sub:"X = ?",                opts:["6","7","8","9"],                                         ans:"8" },
-  { id:4,  q:"9 × X = 36", sub:"X = ?",                opts:["3","4","5","6"],                                         ans:"4" },
-  { id:5,  q:"X × 6 = 30", sub:"X = ?",                opts:["4","5","6","7"],                                         ans:"5" },
-  { id:6,  q:"7 × X = 49", sub:"X = ?",                opts:["6","7","8","9"],                                         ans:"7" },
-  { id:7,  q:"X × 8 = 56", sub:"X = ?",                opts:["6","7","8","9"],                                         ans:"7" },
-  { id:8,  q:"3 × X = 15", sub:"X = ?",                opts:["4","5","6","7"],                                         ans:"5" },
-  { id:9,  q:"X × 2 = 14", sub:"X = ?",                opts:["6","7","8","9"],                                         ans:"7" },
-  { id:10, q:"4 × X = 28", sub:"X = ?",                opts:["6","7","8","9"],                                         ans:"7" },
-  { id:11, q:"X × 9 = 45", sub:"X = ?",                opts:["4","5","6","7"],                                         ans:"5" },
-  { id:12, q:"6 × X = 42", sub:"X = ?",                opts:["6","7","8","9"],                                         ans:"7" },
-  { id:13, q:"X × 7 = 56", sub:"X = ?",                opts:["7","8","9","10"],                                        ans:"8" },
-  { id:14, q:"8 × X = 64", sub:"X = ?",                opts:["7","8","9","10"],                                        ans:"8" },
-  { id:15, q:"X × 5 = 35", sub:"X = ?",                opts:["6","7","8","9"],                                         ans:"7" },
-  { id:16, q:"2 × X = 18", sub:"X = ?",                opts:["7","8","9","10"],                                        ans:"9" },
-  { id:17, q:"X × 4 = 20", sub:"X = ?",                opts:["4","5","6","7"],                                         ans:"5" },
-  { id:18, q:"9 × X = 72", sub:"X = ?",                opts:["7","8","9","10"],                                        ans:"8" },
-  { id:19, q:"X × 10 = 80", sub:"X = ?",               opts:["7","8","9","10"],                                        ans:"8" },
-  { id:20, q:"3 × X = 24", sub:"X = ?",                opts:["6","7","8","9"],                                         ans:"8" },
-  { id:21, q:"X × 6 = 48", sub:"X = ?",                opts:["7","8","9","10"],                                        ans:"8" },
-  { id:22, q:"7 × X = 35", sub:"X = ?",                opts:["4","5","6","7"],                                         ans:"5" },
-  { id:23, q:"X × 8 = 72", sub:"X = ?",                opts:["8","9","10","11"],                                       ans:"9" },
-  { id:24, q:"4 × X = 36", sub:"X = ?",                opts:["8","9","10","11"],                                       ans:"9" },
-  { id:25, q:"X × 5 = 45", sub:"X = ?",                opts:["8","9","10","11"],                                       ans:"9" },
+  { id:1,  q:"X × 3 = 21", sub:"X = ?", opts:["5","6","7","8"], ans:"7" },
+  { id:2,  q:"5 × X = 40", sub:"X = ?", opts:["6","7","8","9"], ans:"8" },
+  { id:3,  q:"X × 4 = 32", sub:"X = ?", opts:["6","7","8","9"], ans:"8" },
+  { id:4,  q:"9 × X = 36", sub:"X = ?", opts:["3","4","5","6"], ans:"4" },
+  { id:5,  q:"X × 6 = 30", sub:"X = ?", opts:["4","5","6","7"], ans:"5" },
+  { id:6,  q:"7 × X = 49", sub:"X = ?", opts:["6","7","8","9"], ans:"7" },
+  { id:7,  q:"X × 8 = 56", sub:"X = ?", opts:["6","7","8","9"], ans:"7" },
+  { id:8,  q:"3 × X = 15", sub:"X = ?", opts:["4","5","6","7"], ans:"5" },
+  { id:9,  q:"X × 2 = 14", sub:"X = ?", opts:["6","7","8","9"], ans:"7" },
+  { id:10, q:"4 × X = 28", sub:"X = ?", opts:["6","7","8","9"], ans:"7" },
+  { id:11, q:"X × 9 = 45", sub:"X = ?", opts:["4","5","6","7"], ans:"5" },
+  { id:12, q:"6 × X = 42", sub:"X = ?", opts:["6","7","8","9"], ans:"7" },
+  { id:13, q:"X × 7 = 56", sub:"X = ?", opts:["7","8","9","10"], ans:"8" },
+  { id:14, q:"8 × X = 64", sub:"X = ?", opts:["7","8","9","10"], ans:"8" },
+  { id:15, q:"X × 5 = 35", sub:"X = ?", opts:["6","7","8","9"], ans:"7" },
+  { id:16, q:"2 × X = 18", sub:"X = ?", opts:["7","8","9","10"], ans:"9" },
+  { id:17, q:"X × 4 = 20", sub:"X = ?", opts:["4","5","6","7"], ans:"5" },
+  { id:18, q:"9 × X = 72", sub:"X = ?", opts:["7","8","9","10"], ans:"8" },
+  { id:19, q:"X × 10 = 80", sub:"X = ?", opts:["7","8","9","10"], ans:"8" },
+  { id:20, q:"3 × X = 24", sub:"X = ?", opts:["6","7","8","9"], ans:"8" },
+  { id:21, q:"X × 6 = 48", sub:"X = ?", opts:["7","8","9","10"], ans:"8" },
+  { id:22, q:"7 × X = 35", sub:"X = ?", opts:["4","5","6","7"], ans:"5" },
+  { id:23, q:"X × 8 = 72", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
+  { id:24, q:"4 × X = 36", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
+  { id:25, q:"X × 5 = 45", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
 ];
 
 const MATH_DIV = [
-  { id:1,  q:"24 ÷ X = 6", sub:"X = ?",                opts:["3","4","5","6"],                                         ans:"4" },
-  { id:2,  q:"X ÷ 2 = 6", sub:"X = ?",                 opts:["10","11","12","13"],                                     ans:"12" },
-  { id:3,  q:"40 ÷ X = 8", sub:"X = ?",                opts:["3","4","5","6"],                                         ans:"5" },
-  { id:4,  q:"X ÷ 5 = 3", sub:"X = ?",                 opts:["12","13","14","15"],                                     ans:"15" },
-  { id:5,  q:"36 ÷ X = 9", sub:"X = ?",                opts:["3","4","5","6"],                                         ans:"4" },
-  { id:6,  q:"56 ÷ X = 7", sub:"X = ?",                opts:["6","7","8","9"],                                         ans:"8" },
-  { id:7,  q:"X ÷ 3 = 4", sub:"X = ?",                 opts:["10","11","12","13"],                                     ans:"12" },
-  { id:8,  q:"45 ÷ X = 9", sub:"X = ?",                opts:["4","5","6","7"],                                         ans:"5" },
-  { id:9,  q:"X ÷ 4 = 5", sub:"X = ?",                 opts:["18","19","20","21"],                                     ans:"20" },
-  { id:10, q:"63 ÷ X = 7", sub:"X = ?",                opts:["8","9","10","11"],                                       ans:"9" },
-  { id:11, q:"X ÷ 6 = 5", sub:"X = ?",                 opts:["28","29","30","31"],                                     ans:"30" },
-  { id:12, q:"48 ÷ X = 6", sub:"X = ?",                opts:["7","8","9","10"],                                        ans:"8" },
-  { id:13, q:"X ÷ 7 = 4", sub:"X = ?",                 opts:["24","25","28","30"],                                     ans:"28" },
-  { id:14, q:"72 ÷ X = 8", sub:"X = ?",                opts:["8","9","10","11"],                                       ans:"9" },
-  { id:15, q:"X ÷ 8 = 3", sub:"X = ?",                 opts:["20","22","24","26"],                                     ans:"24" },
-  { id:16, q:"35 ÷ X = 5", sub:"X = ?",                opts:["6","7","8","9"],                                         ans:"7" },
-  { id:17, q:"X ÷ 9 = 2", sub:"X = ?",                 opts:["16","17","18","19"],                                     ans:"18" },
-  { id:18, q:"54 ÷ X = 6", sub:"X = ?",                opts:["8","9","10","11"],                                       ans:"9" },
-  { id:19, q:"X ÷ 5 = 6", sub:"X = ?",                 opts:["28","29","30","31"],                                     ans:"30" },
-  { id:20, q:"32 ÷ X = 4", sub:"X = ?",                opts:["7","8","9","10"],                                        ans:"8" },
-  { id:21, q:"X ÷ 2 = 9", sub:"X = ?",                 opts:["16","17","18","19"],                                     ans:"18" },
-  { id:22, q:"42 ÷ X = 6", sub:"X = ?",                opts:["6","7","8","9"],                                         ans:"7" },
-  { id:23, q:"X ÷ 3 = 7", sub:"X = ?",                 opts:["18","19","20","21"],                                     ans:"21" },
-  { id:24, q:"64 ÷ X = 8", sub:"X = ?",                opts:["7","8","9","10"],                                        ans:"8" },
-  { id:25, q:"X ÷ 6 = 6", sub:"X = ?",                 opts:["32","34","36","38"],                                     ans:"36" },
+  { id:1,  q:"24 ÷ X = 6", sub:"X = ?", opts:["3","4","5","6"], ans:"4" },
+  { id:2,  q:"X ÷ 2 = 6", sub:"X = ?", opts:["10","11","12","13"], ans:"12" },
+  { id:3,  q:"40 ÷ X = 8", sub:"X = ?", opts:["3","4","5","6"], ans:"5" },
+  { id:4,  q:"X ÷ 5 = 3", sub:"X = ?", opts:["12","13","14","15"], ans:"15" },
+  { id:5,  q:"36 ÷ X = 9", sub:"X = ?", opts:["3","4","5","6"], ans:"4" },
+  { id:6,  q:"56 ÷ X = 7", sub:"X = ?", opts:["6","7","8","9"], ans:"8" },
+  { id:7,  q:"X ÷ 3 = 4", sub:"X = ?", opts:["10","11","12","13"], ans:"12" },
+  { id:8,  q:"45 ÷ X = 9", sub:"X = ?", opts:["4","5","6","7"], ans:"5" },
+  { id:9,  q:"X ÷ 4 = 5", sub:"X = ?", opts:["18","19","20","21"], ans:"20" },
+  { id:10, q:"63 ÷ X = 7", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
+  { id:11, q:"X ÷ 6 = 5", sub:"X = ?", opts:["28","29","30","31"], ans:"30" },
+  { id:12, q:"48 ÷ X = 6", sub:"X = ?", opts:["7","8","9","10"], ans:"8" },
+  { id:13, q:"X ÷ 7 = 4", sub:"X = ?", opts:["24","25","28","30"], ans:"28" },
+  { id:14, q:"72 ÷ X = 8", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
+  { id:15, q:"X ÷ 8 = 3", sub:"X = ?", opts:["20","22","24","26"], ans:"24" },
+  { id:16, q:"35 ÷ X = 5", sub:"X = ?", opts:["6","7","8","9"], ans:"7" },
+  { id:17, q:"X ÷ 9 = 2", sub:"X = ?", opts:["16","17","18","19"], ans:"18" },
+  { id:18, q:"54 ÷ X = 6", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
+  { id:19, q:"X ÷ 5 = 6", sub:"X = ?", opts:["28","29","30","31"], ans:"30" },
+  { id:20, q:"32 ÷ X = 4", sub:"X = ?", opts:["7","8","9","10"], ans:"8" },
+  { id:21, q:"X ÷ 2 = 9", sub:"X = ?", opts:["16","17","18","19"], ans:"18" },
+  { id:22, q:"42 ÷ X = 6", sub:"X = ?", opts:["6","7","8","9"], ans:"7" },
+  { id:23, q:"X ÷ 3 = 7", sub:"X = ?", opts:["18","19","20","21"], ans:"21" },
+  { id:24, q:"64 ÷ X = 8", sub:"X = ?", opts:["7","8","9","10"], ans:"8" },
+  { id:25, q:"X ÷ 6 = 6", sub:"X = ?", opts:["32","34","36","38"], ans:"36" },
 ];
 
 const MATH_PROBLEMS = [
-  { id:1,  q:"🎁 Sənə 10 şokolad verdim və sonra 3 şokolad daha əlavə etdim. Cəmi neçə şokoladın oldu?",        opts:["10","12","13","15"],                                  ans:"13" },
-  { id:2,  q:"🎈 Qutuda 15 şar var idi. 8 şar partladı. Neçə şar qaldı?",         opts:["5","6","7","9"],                                     ans:"7" },
-  { id:3,  q:"🍎 Alma ağacında 20 alma vardı. 12 almanı yedik. Neçə alma qaldı?", opts:["6","7","8","9"],  ans:"8" },
-  { id:4,  q:"📚 Kitab rəfində 5 kitab var idi. Daha 10 kitab qoydular. İndi neçə kitab var?", opts:["10","12","15","16"],                                 ans:"15" },
-  { id:5,  q:"🍪 Mədəniyyət dərnəyində 3 qrup var, hər qrupda 7 uşaq var. Cəmi neçə uşaq var?",     opts:["18","20","21","24"],                                     ans:"21" },
-  { id:6,  q:"🎮 24 oyuncaq 4 uşağa bərabər paylandı. Hər uşaq neçə oyuncaq aldı?",        opts:["4","5","6","8"],                                     ans:"6" },
-  { id:7,  q:"🏀 Basketbol matçında Mehin 9 xal, Əmir 8 xal qazandı. Cəmi neçə xal oldu?",                opts:["15","16","17","19"],                                 ans:"17" },
-  { id:8,  q:"🎭 Teatr səhnəsində 30 oyunçu var idi. 12 oyunçu getdi. Neçə oyunçu qaldı?", opts:["16","17","18","20"],                                 ans:"18" },
-  { id:9,  q:"🌟 Səndə 12 ulduz stiker var. Onları 2 bərabər qrupa bölsən, hər qrupda neçə stiker olar?",          opts:["4","5","6","8"],                                     ans:"6" },
-  { id:10, q:"⚽ Futbol oyununda 5 komanda var, hər komandada 8 oyunçu var. Cəmi neçə oyunçu var?",           opts:["35","40","45","50"],                                 ans:"40" },
-  { id:11, q:"🎓 Mehin bu il 10 yaşındadır. 8 il sonra neçə yaşında olacaq?",           opts:["16","17","18","20"],                                 ans:"18" },
-  { id:12, q:"🎂 Doğum günü təntənəsinə 6 qız və 9 oğlan gəldi. Cəmi neçə uşaq gəldi?",              opts:["13","14","15","17"],                                 ans:"15" },
-  { id:13, q:"🚗 Parkda 8 maşın var idi. Daha 5 maşın gəldi. İndi neçə maşın var?",                 opts:["12","13","14","15"],                                 ans:"13" },
-  { id:14, q:"🍕 Pizza 8 dilimə bölündü. Hər dostumun 2 dilim yedi. Neçə dost var?",                 opts:["3","4","5","6"],                                     ans:"4" },
-  { id:15, q:"💰 Sənin 20 manatın var. Dəftərə 5 manat, qələmə 3 manat xərclədin. Neçə manatın qaldı?",        opts:["10","11","12","13"],                                 ans:"12" },
-  { id:16, q:"🌺 Bağçada 15 gül var idi. 6 gül kəsilib aparıldı. Neçə gül qaldı?",                       opts:["7","8","9","11"],                                    ans:"9" },
-  { id:17, q:"✏️ Dəftərdə 50 səhifə var. 23 səhifəni yazıb bitirdim. Neçə səhifə qaldı?",           opts:["25","26","27","30"],                                 ans:"27" },
-  { id:18, q:"🍇 Səbətdə 24 üzüm var. 3 dostuma bərabər payladım. Hər dost neçə üzüm aldı?",      opts:["6","7","8","9"],                                     ans:"8" },
-  { id:19, q:"🎯 Oyun oynadıq. Mən 25 xal, dostum 18 xal qazandı. Xalların fərqi neçədir?",              opts:["5","6","7","8"],                                     ans:"7" },
-  { id:20, q:"🏠 Evin birinci mərtəbəsində 4 dairə, ikinci mərtəbəsində 6 dairə var. Cəmi neçə dairə var?", opts:["8","9","10","12"],                                    ans:"10" },
+  { id:1,  q:"🎁 Sənə 10 şokolad verdim və sonra 3 şokolad daha əlavə etdim. Cəmi neçə şokoladın oldu?", opts:["10","12","13","15"], ans:"13" },
+  { id:2,  q:"🎈 Qutuda 15 şar var idi. 8 şar partladı. Neçə şar qaldı?", opts:["5","6","7","9"], ans:"7" },
+  { id:3,  q:"🍎 Alma ağacında 20 alma vardı. 12 almanı yedik. Neçə alma qaldı?", opts:["6","7","8","9"], ans:"8" },
+  { id:4,  q:"📚 Kitab rəfində 5 kitab var idi. Daha 10 kitab qoydular. İndi neçə kitab var?", opts:["10","12","15","16"], ans:"15" },
+  { id:5,  q:"🍪 Mədəniyyət dərnəyində 3 qrup var, hər qrupda 7 uşaq var. Cəmi neçə uşaq var?", opts:["18","20","21","24"], ans:"21" },
+  { id:6,  q:"🎮 24 oyuncaq 4 uşağa bərabər paylandı. Hər uşaq neçə oyuncaq aldı?", opts:["4","5","6","8"], ans:"6" },
+  { id:7,  q:"🏀 Basketbol matçında Mehin 9 xal, Əmir 8 xal qazandı. Cəmi neçə xal oldu?", opts:["15","16","17","19"], ans:"17" },
+  { id:8,  q:"🎭 Teatr səhnəsində 30 oyunçu var idi. 12 oyunçu getdi. Neçə oyunçu qaldı?", opts:["16","17","18","20"], ans:"18" },
+  { id:9,  q:"🌟 Səndə 12 ulduz stiker var. Onları 2 bərabər qrupa bölsən, hər qrupda neçə stiker olar?", opts:["4","5","6","8"], ans:"6" },
+  { id:10, q:"⚽ Futbol oyununda 5 komanda var, hər komandada 8 oyunçu var. Cəmi neçə oyunçu var?", opts:["35","40","45","50"], ans:"40" },
+  { id:11, q:"🎓 Mehin bu il 10 yaşındadır. 8 il sonra neçə yaşında olacaq?", opts:["16","17","18","20"], ans:"18" },
+  { id:12, q:"🎂 Doğum günü təntənəsinə 6 qız və 9 oğlan gəldi. Cəmi neçə uşaq gəldi?", opts:["13","14","15","17"], ans:"15" },
+  { id:13, q:"🚗 Parkda 8 maşın var idi. Daha 5 maşın gəldi. İndi neçə maşın var?", opts:["12","13","14","15"], ans:"13" },
+  { id:14, q:"🍕 Pizza 8 dilimə bölündü. Hər dostumun 2 dilim yedi. Neçə dost var?", opts:["3","4","5","6"], ans:"4" },
+  { id:15, q:"💰 Sənin 20 manatın var. Dəftərə 5 manat, qələmə 3 manat xərclədin. Neçə manatın qaldı?", opts:["10","11","12","13"], ans:"12" },
+  { id:16, q:"🌺 Bağçada 15 gül var idi. 6 gül kəsilib aparıldı. Neçə gül qaldı?", opts:["7","8","9","11"], ans:"9" },
+  { id:17, q:"✏️ Dəftərdə 50 səhifə var. 23 səhifəni yazıb bitirdim. Neçə səhifə qaldı?", opts:["25","26","27","30"], ans:"27" },
+  { id:18, q:"🍇 Səbətdə 24 üzüm var. 3 dostuma bərabər payladım. Hər dost neçə üzüm aldı?", opts:["6","7","8","9"], ans:"8" },
+  { id:19, q:"🎯 Oyun oynadıq. Mən 25 xal, dostum 18 xal qazandı. Xalların fərqi neçədir?", opts:["5","6","7","8"], ans:"7" },
+  { id:20, q:"🏠 Evin birinci mərtəbəsində 4 dairə, ikinci mərtəbəsində 6 dairə var. Cəmi neçə dairə var?", opts:["8","9","10","12"], ans:"10" },
 ];
 
-// ─── WATER & COUNTRY DATA ───────────────────────────────────────────────────
 const WATER_TYPES = [
   {
     id:"ocean", icon:"🌊", name:"Okean", tag:"Ən böyük", color:"#0277BD",
@@ -369,6 +509,8 @@ const GlobalStyle = () => (
     @media(max-width:480px){.cont-grid{grid-template-columns:1fr;}}
     .cont-card{border-radius:14px;padding:12px 13px;display:flex;align-items:flex-start;gap:10px;color:white;text-shadow:1px 1px 2px rgba(0,0,0,0.4);box-shadow:0 4px 14px rgba(0,0,0,0.2);cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;}
     @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes popIn{0%{transform:scale(0.5);opacity:0;}60%{transform:scale(1.15);}100%{transform:scale(1);opacity:1;}}
+    @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
     .planet-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:11px;margin:10px 0;}
     @media(max-width:380px){.planet-grid{grid-template-columns:repeat(2,1fr);}}
     .planet-card{border-radius:16px;padding:13px 11px;color:white;cursor:pointer;transition:all 0.2s;text-shadow:1px 1px 3px rgba(0,0,0,0.5);border:3px solid transparent;}
@@ -403,6 +545,27 @@ const GlobalStyle = () => (
     .info-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px;}
     .info-chip{background:rgba(255,255,255,0.08);border-radius:11px;padding:7px 11px;display:flex;align-items:center;gap:6px;color:#E3F2FD;font-size:0.78rem;font-weight:700;}
     .scroll-hint{font-size:0.7rem;color:#90CAF9;text-align:center;margin-bottom:5px;}
+
+    /* ── CELEBRATION RESULT BOX ── */
+    .celeb-box{
+      animation: popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) forwards;
+    }
+    .celeb-score{
+      font-family:'Baloo 2',cursive;
+      font-size:3rem;
+      background:linear-gradient(135deg,#FFD700,#FF8C00);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    .correct-flash{
+      animation: correctFlash 0.4s ease;
+    }
+    @keyframes correctFlash{
+      0%{background:rgba(255,255,255,0.97);}
+      30%{background:#C8E6C9;}
+      100%{background:rgba(255,255,255,0.97);}
+    }
   `}</style>
 );
 
@@ -450,11 +613,7 @@ function PlanetDetail({ p }) {
         <StatBox icon="📏" label="Məsafə" value={p.distanceM} valueColor="#CE93D8"/>
         <StatBox icon="📐" label="Ölçü" value={p.size} valueColor="#80CBC4"/>
       </div>
-      <div style={{
-        background:p.livable?"rgba(46,125,50,0.3)":"rgba(183,28,28,0.3)",
-        border:`2px solid ${p.livable?"#4CAF50":"#F44336"}`,
-        borderRadius:12,padding:"10px 13px",marginBottom:11,
-      }}>
+      <div style={{background:p.livable?"rgba(46,125,50,0.3)":"rgba(183,28,28,0.3)",border:`2px solid ${p.livable?"#4CAF50":"#F44336"}`,borderRadius:12,padding:"10px 13px",marginBottom:11}}>
         <span style={{fontSize:"1.1rem"}}>{p.livable?"✅":"❌"}</span>
         <span style={{fontWeight:800,color:p.livable?"#A5D6A7":"#EF9A9A",marginLeft:7,fontSize:"0.9rem"}}>
           {p.livable?"Yaşamaq üçün uyğundur!":"Yaşamaq üçün uyğun deyil!"}
@@ -469,10 +628,13 @@ function PlanetDetail({ p }) {
   );
 }
 
+// ─── QUIZ ───────────────────────────────────────────────────────────────────
 function Quiz() {
   const [answers, setAnswers] = useState({});
   const [showResult, setShowResult] = useState(false);
+  const [celebrate, setCelebrate] = useState(false);
   const [filter, setFilter] = useState("all");
+  const [flashId, setFlashId] = useState(null);
 
   const topics = ["all",...new Set(QUIZ_QUESTIONS.map(q=>q.topic))];
   const filtered = filter==="all" ? QUIZ_QUESTIONS : QUIZ_QUESTIONS.filter(q=>q.topic===filter);
@@ -480,11 +642,30 @@ function Quiz() {
   const handleAnswer = (qid, opt) => {
     if (answers[qid]) return;
     const q = filtered.find(x=>x.id===qid);
-    setAnswers(prev=>({...prev,[qid]:{chosen:opt,correct:opt===q.ans}}));
+    const correct = opt === q.ans;
+    if (correct) {
+      playCorrectSound();
+      setFlashId(qid);
+      setTimeout(() => setFlashId(null), 400);
+    } else {
+      playWrongSound();
+    }
+    setAnswers(prev=>({...prev,[qid]:{chosen:opt,correct}}));
   };
 
   const answered = Object.keys(answers).length;
   const score = Object.values(answers).filter(a=>a.correct).length;
+
+  const handleShowResult = () => {
+    setShowResult(true);
+    const threshold = filtered.length >= 25 ? 20 : Math.ceil(filtered.length * 0.8);
+    if (score >= threshold) {
+      playVictorySound();
+      setCelebrate(true);
+      setTimeout(() => setCelebrate(false), 100);
+      setTimeout(() => setCelebrate(true), 200);
+    }
+  };
 
   const getResult = () => {
     const n = filtered.length, s = score;
@@ -496,92 +677,110 @@ function Quiz() {
   };
 
   const fb = ["🎉 Bravo!","⭐ Əfərin!","🌟 Çox yaxşı!","👏 Düzgün!"];
+  const threshold = filtered.length >= 25 ? 20 : Math.ceil(filtered.length * 0.8);
+  const isCelebrating = showResult && score >= threshold;
 
   return (
-    <div className="quiz-wrap">
-      <div style={{textAlign:"center",marginBottom:14}}>
-        <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"clamp(1.4rem,5vw,2rem)",color:"#FFD700"}}>🎯 Test Vaxtı! 🎯</div>
-        <div style={{color:"#90CAF9",fontWeight:700,fontSize:"0.84rem",marginTop:3}}>Cəmi {QUIZ_QUESTIONS.length} sual!</div>
-      </div>
+    <>
+      <Celebration show={isCelebrating} />
+      <div className="quiz-wrap">
+        <div style={{textAlign:"center",marginBottom:14}}>
+          <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"clamp(1.4rem,5vw,2rem)",color:"#FFD700"}}>🎯 Test Vaxtı! 🎯</div>
+          <div style={{color:"#90CAF9",fontWeight:700,fontSize:"0.84rem",marginTop:3}}>Cəmi {QUIZ_QUESTIONS.length} sual!</div>
+        </div>
 
-      <div className="topic-filter">
-        {topics.map(t=>(
-          <button key={t} onClick={()=>{setFilter(t);setAnswers({});setShowResult(false);}} style={{
-            background:filter===t?"#FFD700":"rgba(255,255,255,0.1)",
-            color:filter===t?"#1A237E":"#E3F2FD",
-            border:`2px solid ${filter===t?"#FFC107":"rgba(255,255,255,0.2)"}`,
-            borderRadius:30,padding:"5px 11px",fontSize:"0.77rem",
-            fontWeight:800,cursor:"pointer",fontFamily:"'Nunito',sans-serif",whiteSpace:"nowrap",
-          }}>{t==="all"?"🎯 Hamısı":t}</button>
-        ))}
-      </div>
+        <div className="topic-filter">
+          {topics.map(t=>(
+            <button key={t} onClick={()=>{setFilter(t);setAnswers({});setShowResult(false);setCelebrate(false);}} style={{
+              background:filter===t?"#FFD700":"rgba(255,255,255,0.1)",
+              color:filter===t?"#1A237E":"#E3F2FD",
+              border:`2px solid ${filter===t?"#FFC107":"rgba(255,255,255,0.2)"}`,
+              borderRadius:30,padding:"5px 11px",fontSize:"0.77rem",
+              fontWeight:800,cursor:"pointer",fontFamily:"'Nunito',sans-serif",whiteSpace:"nowrap",
+            }}>{t==="all"?"🎯 Hamısı":t}</button>
+          ))}
+        </div>
 
-      <div style={{color:"#FFD700",fontWeight:800,textAlign:"center",fontSize:"0.84rem",marginBottom:6}}>
-        {answered} / {filtered.length} sual cavablandı
-      </div>
-      <div style={{background:"rgba(255,255,255,0.15)",borderRadius:30,height:10,overflow:"hidden",marginBottom:16}}>
-        <div style={{width:`${filtered.length?(answered/filtered.length*100):0}%`,height:"100%",borderRadius:30,background:"linear-gradient(90deg,#FFD700,#FF8C00)",transition:"width 0.4s"}}/>
-      </div>
+        <div style={{color:"#FFD700",fontWeight:800,textAlign:"center",fontSize:"0.84rem",marginBottom:6}}>
+          {answered} / {filtered.length} sual cavablandı
+        </div>
+        <div style={{background:"rgba(255,255,255,0.15)",borderRadius:30,height:10,overflow:"hidden",marginBottom:16}}>
+          <div style={{width:`${filtered.length?(answered/filtered.length*100):0}%`,height:"100%",borderRadius:30,background:"linear-gradient(90deg,#FFD700,#FF8C00)",transition:"width 0.4s"}}/>
+        </div>
 
-      {filtered.map((q,i)=>{
-        const a = answers[q.id];
-        return (
-          <div key={q.id} className="quiz-card">
-            <div style={{position:"absolute",top:-11,left:12,background:"#FFD700",color:"#1A237E",fontWeight:900,fontSize:"0.77rem",padding:"2px 11px",borderRadius:20}}>Sual {i+1}</div>
-            <div style={{position:"absolute",top:-11,right:12,background:"rgba(240,240,240,0.95)",color:"#666",fontWeight:800,fontSize:"0.67rem",padding:"2px 8px",borderRadius:20,border:"1px solid #DDD"}}>{q.topic}</div>
-            <div style={{fontWeight:800,fontSize:"0.97rem",color:"#222",paddingTop:9,marginBottom:12,lineHeight:1.4}}>{q.q}</div>
-            <div className="quiz-opts">
-              {q.opts.map(opt=>{
-                const isCor = opt===q.ans, isCho = a?.chosen===opt;
-                let bg="#EDE7F6",bc="#B39DDB",col="#4A148C";
-                if(a){ if(isCor){bg="#C8E6C9";bc="#2E7D32";col="#1B5E20";} else if(isCho){bg="#FFCDD2";bc="#B71C1C";col="#B71C1C";} }
-                return (
-                  <button key={opt} disabled={!!a} className="opt-btn"
-                    style={{background:bg,borderColor:bc,color:col,cursor:a?"default":"pointer"}}
-                    onClick={()=>handleAnswer(q.id,opt)}>
-                    {a&&isCor?"✅ ":""}{a&&isCho&&!a.correct?"❌ ":""}{opt}
-                  </button>
-                );
-              })}
-            </div>
-            {a && (
-              <div style={{marginTop:8,padding:"6px 10px",borderRadius:8,textAlign:"center",fontWeight:800,fontSize:"0.9rem",background:a.correct?"#C8E6C9":"#FFCDD2",color:a.correct?"#1B5E20":"#B71C1C"}}>
-                {a.correct ? fb[q.id%4] : `😊 Düzgün cavab: ${q.ans}`}
+        {filtered.map((q,i)=>{
+          const a = answers[q.id];
+          return (
+            <div key={q.id} className={`quiz-card${flashId===q.id?" correct-flash":""}`}>
+              <div style={{position:"absolute",top:-11,left:12,background:"#FFD700",color:"#1A237E",fontWeight:900,fontSize:"0.77rem",padding:"2px 11px",borderRadius:20}}>Sual {i+1}</div>
+              <div style={{position:"absolute",top:-11,right:12,background:"rgba(240,240,240,0.95)",color:"#666",fontWeight:800,fontSize:"0.67rem",padding:"2px 8px",borderRadius:20,border:"1px solid #DDD"}}>{q.topic}</div>
+              <div style={{fontWeight:800,fontSize:"0.97rem",color:"#222",paddingTop:9,marginBottom:12,lineHeight:1.4}}>{q.q}</div>
+              <div className="quiz-opts">
+                {q.opts.map(opt=>{
+                  const isCor = opt===q.ans, isCho = a?.chosen===opt;
+                  let bg="#EDE7F6",bc="#B39DDB",col="#4A148C";
+                  if(a){ if(isCor){bg="#C8E6C9";bc="#2E7D32";col="#1B5E20";} else if(isCho){bg="#FFCDD2";bc="#B71C1C";col="#B71C1C";} }
+                  return (
+                    <button key={opt} disabled={!!a} className="opt-btn"
+                      style={{background:bg,borderColor:bc,color:col,cursor:a?"default":"pointer"}}
+                      onClick={()=>handleAnswer(q.id,opt)}>
+                      {a&&isCor?"✅ ":""}{a&&isCho&&!a.correct?"❌ ":""}{opt}
+                    </button>
+                  );
+                })}
               </div>
-            )}
-          </div>
-        );
-      })}
+              {a && (
+                <div style={{marginTop:8,padding:"6px 10px",borderRadius:8,textAlign:"center",fontWeight:800,fontSize:"0.9rem",background:a.correct?"#C8E6C9":"#FFCDD2",color:a.correct?"#1B5E20":"#B71C1C"}}>
+                  {a.correct ? fb[q.id%4] : `😊 Düzgün cavab: ${q.ans}`}
+                </div>
+              )}
+            </div>
+          );
+        })}
 
-      <button onClick={()=>setShowResult(true)} style={{display:"block",width:"100%",background:"linear-gradient(135deg,#FFD700,#FFA000)",color:"#1A237E",border:"none",borderRadius:16,padding:"13px",fontSize:"1.05rem",fontWeight:900,fontFamily:"'Nunito',sans-serif",cursor:"pointer",boxShadow:"0 5px 20px rgba(255,215,0,0.4)",marginTop:4}}>
-        🏆 Nəticəmi göstər!
-      </button>
+        <button onClick={handleShowResult} style={{display:"block",width:"100%",background:"linear-gradient(135deg,#FFD700,#FFA000)",color:"#1A237E",border:"none",borderRadius:16,padding:"13px",fontSize:"1.05rem",fontWeight:900,fontFamily:"'Nunito',sans-serif",cursor:"pointer",boxShadow:"0 5px 20px rgba(255,215,0,0.4)",marginTop:4}}>
+          🏆 Nəticəmi göstər!
+        </button>
 
-      {showResult && (()=>{
-        const r = getResult();
-        return (
-          <div style={{background:"white",borderRadius:16,padding:20,marginTop:16,textAlign:"center"}}>
-            <div style={{fontSize:"2.8rem"}}>{r.emoji}</div>
-            <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"1.5rem",color:"#4A148C",margin:"6px 0"}}>{r.text}</div>
-            <div style={{fontSize:"1.5rem",letterSpacing:4,marginBottom:7}}>{r.stars}</div>
-            <div style={{fontWeight:700,color:"#555",marginBottom:13,fontSize:"0.9rem"}}>{r.msg}</div>
-            <button onClick={()=>{setAnswers({});setShowResult(false);}} style={{background:"#EDE7F6",color:"#4A148C",border:"2px solid #B39DDB",borderRadius:12,padding:"8px 20px",fontSize:"0.92rem",fontWeight:800,cursor:"pointer",fontFamily:"'Nunito',sans-serif"}}>
-              🔄 Yenidən cəhd et!
-            </button>
-          </div>
-        );
-      })()}
-    </div>
+        {showResult && (()=>{
+          const r = getResult();
+          const isWin = score >= threshold;
+          return (
+            <div className="celeb-box" style={{background: isWin ? "linear-gradient(135deg,#FFF9C4,#FFF3E0)" : "white", border: isWin ? "3px solid #FFD700" : "none", borderRadius:16,padding:20,marginTop:16,textAlign:"center",boxShadow: isWin ? "0 0 40px rgba(255,215,0,0.5)" : "none"}}>
+              {isWin && <div style={{fontSize:"2rem",marginBottom:4,letterSpacing:4}}>🎊 🏆 🎊</div>}
+              <div style={{fontSize: isWin ? "3rem" : "2.8rem"}}>{r.emoji}</div>
+              {isWin ? (
+                <div className="celeb-score">{score}/{filtered.length}</div>
+              ) : (
+                <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"1.5rem",color:"#4A148C",margin:"6px 0"}}>{r.text}</div>
+              )}
+              {isWin && (
+                <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"1.3rem",color:"#E65100",marginBottom:4}}>
+                  Əla! Sən çox ağıllısan! 🌟
+                </div>
+              )}
+              <div style={{fontSize:"1.5rem",letterSpacing:4,marginBottom:7}}>{r.stars}</div>
+              <div style={{fontWeight:700,color:"#555",marginBottom:13,fontSize:"0.9rem"}}>{r.msg}</div>
+              <button onClick={()=>{setAnswers({});setShowResult(false);setCelebrate(false);}} style={{background:"#EDE7F6",color:"#4A148C",border:"2px solid #B39DDB",borderRadius:12,padding:"8px 20px",fontSize:"0.92rem",fontWeight:800,cursor:"pointer",fontFamily:"'Nunito',sans-serif"}}>
+                🔄 Yenidən cəhd et!
+              </button>
+            </div>
+          );
+        })()}
+      </div>
+    </>
   );
 }
 
-// ─── MATH QUIZ (SEPARATE WITH SUBTABS) ─────────────────────────────────────
+// ─── MATH QUIZ ──────────────────────────────────────────────────────────────
 function QuizMath() {
   const [mainSub, setMainSub] = useState("testler");
   const [answers, setAnswers] = useState({});
   const [showResult, setShowResult] = useState(false);
   const [subTab, setSubTab] = useState("misal");
   const [operationType, setOperationType] = useState("toplama");
+  const [flashId, setFlashId] = useState(null);
+  const [celebrate, setCelebrate] = useState(false);
 
   const getQuizData = () => {
     if (subTab === "misal") {
@@ -598,11 +797,28 @@ function QuizMath() {
   const handleAnswer = (qid, opt) => {
     if (answers[qid]) return;
     const q = currentQuiz.find(x=>x.id===qid);
-    setAnswers(prev=>({...prev,[qid]:{chosen:opt,correct:opt===q.ans}}));
+    const correct = opt === q.ans;
+    if (correct) {
+      playCorrectSound();
+      setFlashId(qid);
+      setTimeout(() => setFlashId(null), 400);
+    } else {
+      playWrongSound();
+    }
+    setAnswers(prev=>({...prev,[qid]:{chosen:opt,correct}}));
   };
 
   const answered = Object.keys(answers).length;
   const score = Object.values(answers).filter(a=>a.correct).length;
+
+  const handleShowResult = () => {
+    setShowResult(true);
+    if (score >= 20) {
+      playVictorySound();
+      setCelebrate(false);
+      setTimeout(() => setCelebrate(true), 100);
+    }
+  };
 
   const getResult = () => {
     const n = currentQuiz.length, s = score;
@@ -628,170 +844,172 @@ function QuizMath() {
   ];
 
   const mainSubTabs = [
-    {id:"testler",      label:"📝 Testlər"},
-    {id:"cedvel",       label:"📊 Vurma Cədvəli"},
+    {id:"testler",  label:"📝 Testlər"},
+    {id:"cedvel",   label:"📊 Vurma Cədvəli"},
   ];
 
+  const isWin = showResult && score >= 20;
+
   return (
-    <div className="quiz-wrap">
-      <div style={{textAlign:"center",marginBottom:14}}>
-        <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"clamp(1.6rem,6vw,2.5rem)",color:"#4CAF50",textShadow:"0 0 10px rgba(76,175,80,0.3)"}}>📐 RIYAZIYYAT 📐</div>
-      </div>
+    <>
+      <Celebration show={celebrate} />
+      <div className="quiz-wrap">
+        <div style={{textAlign:"center",marginBottom:14}}>
+          <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"clamp(1.6rem,6vw,2.5rem)",color:"#4CAF50",textShadow:"0 0 10px rgba(76,175,80,0.3)"}}>📐 RIYAZIYYAT 📐</div>
+        </div>
 
-      <div style={{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"center",marginBottom:16}}>
-        {mainSubTabs.map(m=>(
-          <button key={m.id} onClick={()=>{setMainSub(m.id);setSubTab("misal");setOperationType("toplama");setAnswers({});setShowResult(false);}} style={{
-            background:mainSub===m.id?"linear-gradient(135deg,#2E7D32,#4CAF50)":"rgba(255,255,255,0.08)",
-            color:mainSub===m.id?"white":"#90CAF9",
-            border:`2px solid ${mainSub===m.id?"#66BB6A":"rgba(255,255,255,0.2)"}`,
-            borderRadius:25,padding:"8px 16px",fontSize:"0.87rem",fontWeight:700,
-            cursor:"pointer",fontFamily:"'Nunito',sans-serif",whiteSpace:"nowrap",
-            boxShadow:mainSub===m.id?"0 4px 14px rgba(76,175,80,0.4)":"none",
-            transition:"all 0.2s",
-          }}>{m.label}</button>
-        ))}
-      </div>
-
-      {mainSub === "testler" && (
-        <>
-          <div style={{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"center",marginBottom:16}}>
-            {subTabs.map(s=>(
-              <button key={s.id} onClick={()=>{setSubTab(s.id);setOperationType("toplama");setAnswers({});setShowResult(false);}} style={{
-                background:subTab===s.id?"linear-gradient(135deg,#4CAF50,#66BB6A)":"rgba(255,255,255,0.12)",
-                color:subTab===s.id?"white":"#E3F2FD",
-                border:`2px solid ${subTab===s.id?"#66BB6A":"rgba(255,255,255,0.25)"}`,
-                borderRadius:30,padding:"8px 16px",fontSize:"0.88rem",fontWeight:800,
-                cursor:"pointer",fontFamily:"'Nunito',sans-serif",whiteSpace:"nowrap",
-                boxShadow:subTab===s.id?"0 4px 14px rgba(76,175,80,0.4)":"none",
-                transition:"all 0.2s",
-              }}>{s.label}</button>
-            ))}
-          </div>
-
-      {subTab === "misal" && (
         <div style={{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"center",marginBottom:16}}>
-          {operationTabs.map(op=>(
-            <button key={op.id} onClick={()=>{setOperationType(op.id);setAnswers({});setShowResult(false);}} style={{
-              background:operationType===op.id?"linear-gradient(135deg,#FF6F00,#E65100)":"rgba(255,255,255,0.08)",
-              color:operationType===op.id?"white":"#90CAF9",
-              border:`2px solid ${operationType===op.id?"#FF8C00":"rgba(255,255,255,0.2)"}`,
-              borderRadius:25,padding:"7px 14px",fontSize:"0.8rem",fontWeight:700,
+          {mainSubTabs.map(m=>(
+            <button key={m.id} onClick={()=>{setMainSub(m.id);setSubTab("misal");setOperationType("toplama");setAnswers({});setShowResult(false);setCelebrate(false);}} style={{
+              background:mainSub===m.id?"linear-gradient(135deg,#2E7D32,#4CAF50)":"rgba(255,255,255,0.08)",
+              color:mainSub===m.id?"white":"#90CAF9",
+              border:`2px solid ${mainSub===m.id?"#66BB6A":"rgba(255,255,255,0.2)"}`,
+              borderRadius:25,padding:"8px 16px",fontSize:"0.87rem",fontWeight:700,
               cursor:"pointer",fontFamily:"'Nunito',sans-serif",whiteSpace:"nowrap",
-              boxShadow:operationType===op.id?"0 4px 12px rgba(255,111,0,0.4)":"none",
+              boxShadow:mainSub===m.id?"0 4px 14px rgba(76,175,80,0.4)":"none",
               transition:"all 0.2s",
-            }}>{op.label}</button>
+            }}>{m.label}</button>
           ))}
         </div>
-      )}
 
-      <div style={{color:"#4CAF50",fontWeight:800,textAlign:"center",fontSize:"0.9rem",marginBottom:8}}>
-        ✅ {answered} / {currentQuiz.length} {subTab==="misal"?`${operationType==="toplama"?"toplama":operationType==="cixma"?"çıxma":operationType==="vurma"?"vurma":"bölmə"}`:""} həll etdin
-      </div>
-      <div style={{background:"rgba(76,175,80,0.2)",borderRadius:30,height:12,overflow:"hidden",marginBottom:18}}>
-        <div style={{width:`${currentQuiz.length?(answered/currentQuiz.length*100):0}%`,height:"100%",borderRadius:30,background:"linear-gradient(90deg,#4CAF50,#66BB6A)",transition:"width 0.4s"}}/>
-      </div>
+        {mainSub === "testler" && (
+          <>
+            <div style={{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"center",marginBottom:16}}>
+              {subTabs.map(s=>(
+                <button key={s.id} onClick={()=>{setSubTab(s.id);setOperationType("toplama");setAnswers({});setShowResult(false);setCelebrate(false);}} style={{
+                  background:subTab===s.id?"linear-gradient(135deg,#4CAF50,#66BB6A)":"rgba(255,255,255,0.12)",
+                  color:subTab===s.id?"white":"#E3F2FD",
+                  border:`2px solid ${subTab===s.id?"#66BB6A":"rgba(255,255,255,0.25)"}`,
+                  borderRadius:30,padding:"8px 16px",fontSize:"0.88rem",fontWeight:800,
+                  cursor:"pointer",fontFamily:"'Nunito',sans-serif",whiteSpace:"nowrap",
+                  boxShadow:subTab===s.id?"0 4px 14px rgba(76,175,80,0.4)":"none",
+                  transition:"all 0.2s",
+                }}>{s.label}</button>
+              ))}
+            </div>
 
-      {currentQuiz.map((q,i)=>{
-        const a = answers[q.id];
-        return (
-          <div key={q.id} className="quiz-card" style={{borderLeft:"5px solid #4CAF50"}}>
-            <div style={{position:"absolute",top:-11,left:12,background:"#4CAF50",color:"white",fontWeight:900,fontSize:"0.8rem",padding:"3px 12px",borderRadius:20}}>{subTab==="misal"?"Misal":"Məsələ"} {i+1}</div>
-            <div style={{fontWeight:800,fontSize:"1.25rem",color:"#1B5E20",paddingTop:12,marginBottom:15,lineHeight:1.6,textShadow:"0 1px 2px rgba(0,0,0,0.05)"}}>
-              {q.q}
-              {q.sub && <div style={{marginTop:"8px",fontSize:"1.1rem",color:"#FF6F00",fontWeight:900}}>{q.sub}</div>}
-            </div>
-            <div className="quiz-opts">
-              {q.opts.map(opt=>{
-                const isCor = opt===q.ans, isCho = a?.chosen===opt;
-                let bg="#E8F5E9",bc="#66BB6A",col="#1B5E20";
-                if(a){ if(isCor){bg="#C8E6C9";bc="#2E7D32";col="#1B5E20";} else if(isCho){bg="#FFCDD2";bc="#B71C1C";col:"#B71C1C";} }
-                return (
-                  <button key={opt} disabled={!!a} className="opt-btn"
-                    style={{background:bg,borderColor:bc,color:col,cursor:a?"default":"pointer",fontSize:"1.05rem",fontWeight:700,padding:"12px 14px"}}
-                    onClick={()=>handleAnswer(q.id,opt)}>
-                    {a&&isCor?"✅ ":""}{a&&isCho&&!a.correct?"❌ ":""}{opt}
-                  </button>
-                );
-              })}
-            </div>
-            {a && (
-              <div style={{marginTop:10,padding:"8px 12px",borderRadius:8,textAlign:"center",fontWeight:800,fontSize:"1rem",background:a.correct?"#C8E6C9":"#FFCDD2",color:a.correct?"#1B5E20":"#B71C1C"}}>
-                {a.correct ? fb[q.id%4] : `😊 Düzgün cavab: ${q.ans}`}
+            {subTab === "misal" && (
+              <div style={{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"center",marginBottom:16}}>
+                {operationTabs.map(op=>(
+                  <button key={op.id} onClick={()=>{setOperationType(op.id);setAnswers({});setShowResult(false);setCelebrate(false);}} style={{
+                    background:operationType===op.id?"linear-gradient(135deg,#FF6F00,#E65100)":"rgba(255,255,255,0.08)",
+                    color:operationType===op.id?"white":"#90CAF9",
+                    border:`2px solid ${operationType===op.id?"#FF8C00":"rgba(255,255,255,0.2)"}`,
+                    borderRadius:25,padding:"7px 14px",fontSize:"0.8rem",fontWeight:700,
+                    cursor:"pointer",fontFamily:"'Nunito',sans-serif",whiteSpace:"nowrap",
+                    boxShadow:operationType===op.id?"0 4px 12px rgba(255,111,0,0.4)":"none",
+                    transition:"all 0.2s",
+                  }}>{op.label}</button>
+                ))}
               </div>
             )}
-          </div>
-        );
-      })}
 
-      {answered === currentQuiz.length && !showResult && (
-        <button onClick={()=>setShowResult(true)} style={{width:"100%",marginTop:16,background:"linear-gradient(135deg,#4CAF50,#66BB6A)",color:"white",border:"none",borderRadius:12,padding:"14px 20px",fontSize:"1.05rem",fontWeight:900,cursor:"pointer",fontFamily:"'Nunito',sans-serif",boxShadow:"0 4px 12px rgba(76,175,80,0.4)"}}>
-          🏆 Nəticəmi göstər!
-        </button>
-      )}
+            <div style={{color:"#4CAF50",fontWeight:800,textAlign:"center",fontSize:"0.9rem",marginBottom:8}}>
+              ✅ {answered} / {currentQuiz.length} həll etdin
+            </div>
+            <div style={{background:"rgba(76,175,80,0.2)",borderRadius:30,height:12,overflow:"hidden",marginBottom:18}}>
+              <div style={{width:`${currentQuiz.length?(answered/currentQuiz.length*100):0}%`,height:"100%",borderRadius:30,background:"linear-gradient(90deg,#4CAF50,#66BB6A)",transition:"width 0.4s"}}/>
+            </div>
 
-      {showResult && (()=>{
-        const r = getResult();
-        return (
-          <div style={{background:"white",borderRadius:16,padding:22,marginTop:18,textAlign:"center",boxShadow:"0 8px 24px rgba(0,0,0,0.15)"}}>
-            <div style={{fontSize:"3rem"}}>{r.emoji}</div>
-            <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"1.6rem",color:"#1B5E20",margin:"8px 0"}}>{r.text}</div>
-            <div style={{fontSize:"1.6rem",letterSpacing:5,marginBottom:8}}>{r.stars}</div>
-            <div style={{fontWeight:700,color:"#555",marginBottom:14,fontSize:"0.95rem",lineHeight:1.6}}>{r.msg}</div>
-            <button onClick={()=>{setAnswers({});setShowResult(false);}} style={{background:"#E8F5E9",color:"#1B5E20",border:"2px solid #66BB6A",borderRadius:12,padding:"10px 22px",fontSize:"0.95rem",fontWeight:800,cursor:"pointer",fontFamily:"'Nunito',sans-serif"}}>
-              🔄 Yenidən başla!
-            </button>
-          </div>
-        );
-      })()}
-        </>
-      )}
-
-      {mainSub === "cedvel" && (
-        <div style={{padding:"20px"}}>
-          <div style={{textAlign:"center",marginBottom:20}}>
-            <div style={{fontSize:"1.4rem",fontWeight:800,color:"#ccd9d8ff"}}>📊 1-10 Vurma Cədvəli</div>
-            <div style={{fontSize:"0.9rem",color:"#555",marginTop:4}}>Ezbərləmə üçün hər cədvəli oxu! 📚</div>
-          </div>
-          
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))",gap:16}}>
-            {[1,2,3,4,5,6,7,8,9,10].map(num=>(
-              <div key={num} style={{
-                background:"linear-gradient(135deg,#A5D6A7,#81C784)",
-                border:"3px solid #66BB6A",
-                borderRadius:12,
-                padding:16,
-                boxShadow:"0 4px 12px rgba(76,175,80,0.3)",
-              }}>
-                <div style={{
-                  textAlign:"center",fontWeight:900,fontSize:"1.5rem",
-                  color:"#1B5E20",marginBottom:10,paddingBottom:8,
-                  borderBottom:"2px solid rgba(27,94,32,0.3)",
-                  whiteSpace:"nowrap"
-                }}>
-                  {num} cədvəl
+            {currentQuiz.map((q,i)=>{
+              const a = answers[q.id];
+              return (
+                <div key={q.id} className={`quiz-card${flashId===q.id?" correct-flash":""}`} style={{borderLeft:"5px solid #4CAF50"}}>
+                  <div style={{position:"absolute",top:-11,left:12,background:"#4CAF50",color:"white",fontWeight:900,fontSize:"0.8rem",padding:"3px 12px",borderRadius:20}}>{subTab==="misal"?"Misal":"Məsələ"} {i+1}</div>
+                  <div style={{fontWeight:800,fontSize:"1.25rem",color:"#1B5E20",paddingTop:12,marginBottom:15,lineHeight:1.6,textShadow:"0 1px 2px rgba(0,0,0,0.05)"}}>
+                    {q.q}
+                    {q.sub && <div style={{marginTop:"8px",fontSize:"1.1rem",color:"#FF6F00",fontWeight:900}}>{q.sub}</div>}
+                  </div>
+                  <div className="quiz-opts">
+                    {q.opts.map(opt=>{
+                      const isCor = opt===q.ans, isCho = a?.chosen===opt;
+                      let bg="#E8F5E9",bc="#66BB6A",col="#1B5E20";
+                      if(a){ if(isCor){bg="#C8E6C9";bc="#2E7D32";col="#1B5E20";} else if(isCho){bg="#FFCDD2";bc="#B71C1C";col="#B71C1C";} }
+                      return (
+                        <button key={opt} disabled={!!a} className="opt-btn"
+                          style={{background:bg,borderColor:bc,color:col,cursor:a?"default":"pointer",fontSize:"1.05rem",fontWeight:700,padding:"12px 14px"}}
+                          onClick={()=>handleAnswer(q.id,opt)}>
+                          {a&&isCor?"✅ ":""}{a&&isCho&&!a.correct?"❌ ":""}{opt}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {a && (
+                    <div style={{marginTop:10,padding:"8px 12px",borderRadius:8,textAlign:"center",fontWeight:800,fontSize:"1rem",background:a.correct?"#C8E6C9":"#FFCDD2",color:a.correct?"#1B5E20":"#B71C1C"}}>
+                      {a.correct ? fb[q.id%4] : `😊 Düzgün cavab: ${q.ans}`}
+                    </div>
+                  )}
                 </div>
-                <div style={{fontSize:"0.85rem",fontWeight:700,color:"#1B5E20",lineHeight:1.8}}>
-                  {[1,2,3,4,5,6,7,8,9,10].map(i=>(
-                    <div key={i}>{num} × {i} = <strong style={{fontSize:"1rem"}}>{num*i}</strong></div>
-                  ))}
+              );
+            })}
+
+            {answered === currentQuiz.length && !showResult && (
+              <button onClick={handleShowResult} style={{width:"100%",marginTop:16,background:"linear-gradient(135deg,#4CAF50,#66BB6A)",color:"white",border:"none",borderRadius:12,padding:"14px 20px",fontSize:"1.05rem",fontWeight:900,cursor:"pointer",fontFamily:"'Nunito',sans-serif",boxShadow:"0 4px 12px rgba(76,175,80,0.4)"}}>
+                🏆 Nəticəmi göstər!
+              </button>
+            )}
+
+            {showResult && (()=>{
+              const r = getResult();
+              return (
+                <div className="celeb-box" style={{background: isWin ? "linear-gradient(135deg,#F1F8E9,#DCEDC8)" : "white", border: isWin ? "3px solid #66BB6A" : "none", borderRadius:16,padding:22,marginTop:18,textAlign:"center",boxShadow: isWin ? "0 0 40px rgba(76,175,80,0.4)" : "0 8px 24px rgba(0,0,0,0.15)"}}>
+                  {isWin && <div style={{fontSize:"2rem",marginBottom:4,letterSpacing:4}}>🎊 🏆 🎊</div>}
+                  <div style={{fontSize: isWin ? "3rem" : "3rem"}}>{r.emoji}</div>
+                  {isWin ? (
+                    <div className="celeb-score">{score}/{currentQuiz.length}</div>
+                  ) : (
+                    <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"1.6rem",color:"#1B5E20",margin:"8px 0"}}>{r.text}</div>
+                  )}
+                  {isWin && (
+                    <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"1.3rem",color:"#2E7D32",marginBottom:4}}>
+                      Riyaziyyat ustasısan! 🌟
+                    </div>
+                  )}
+                  <div style={{fontSize:"1.6rem",letterSpacing:5,marginBottom:8}}>{r.stars}</div>
+                  <div style={{fontWeight:700,color:"#555",marginBottom:14,fontSize:"0.95rem",lineHeight:1.6}}>{r.msg}</div>
+                  <button onClick={()=>{setAnswers({});setShowResult(false);setCelebrate(false);}} style={{background:"#E8F5E9",color:"#1B5E20",border:"2px solid #66BB6A",borderRadius:12,padding:"10px 22px",fontSize:"0.95rem",fontWeight:800,cursor:"pointer",fontFamily:"'Nunito',sans-serif"}}>
+                    🔄 Yenidən başla!
+                  </button>
                 </div>
+              );
+            })()}
+          </>
+        )}
+
+        {mainSub === "cedvel" && (
+          <div style={{padding:"20px"}}>
+            <div style={{textAlign:"center",marginBottom:20}}>
+              <div style={{fontSize:"1.4rem",fontWeight:800,color:"#ccd9d8ff"}}>📊 1-10 Vurma Cədvəli</div>
+              <div style={{fontSize:"0.9rem",color:"#90CAF9",marginTop:4}}>Ezbərləmə üçün hər cədvəli oxu! 📚</div>
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))",gap:16}}>
+              {[1,2,3,4,5,6,7,8,9,10].map(num=>(
+                <div key={num} style={{background:"linear-gradient(135deg,#A5D6A7,#81C784)",border:"3px solid #66BB6A",borderRadius:12,padding:16,boxShadow:"0 4px 12px rgba(76,175,80,0.3)"}}>
+                  <div style={{textAlign:"center",fontWeight:900,fontSize:"1.5rem",color:"#1B5E20",marginBottom:10,paddingBottom:8,borderBottom:"2px solid rgba(27,94,32,0.3)",whiteSpace:"nowrap"}}>
+                    {num} cədvəl
+                  </div>
+                  <div style={{fontSize:"0.85rem",fontWeight:700,color:"#1B5E20",lineHeight:1.8}}>
+                    {[1,2,3,4,5,6,7,8,9,10].map(i=>(
+                      <div key={i}>{num} × {i} = <strong style={{fontSize:"1rem"}}>{num*i}</strong></div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{marginTop:30,padding:"20px",background:"#E8F5E9",borderRadius:12,border:"2px solid #66BB6A"}}>
+              <div style={{fontWeight:800,color:"#1B5E20",marginBottom:10}}>💡 Vurmanın Əsas Qaydaları:</div>
+              <div style={{fontSize:"0.9rem",color:"#444",lineHeight:1.8}}>
+                <div>• <strong>Vurma:</strong> Eyni ədəd bir neçə dəfə toplanır</div>
+                <div>• <strong>Məsələn:</strong> 3 × 4 = 3 + 3 + 3 + 3 = 12</div>
+                <div>• <strong>Sırası fərqlənmir:</strong> 3 × 4 = 4 × 3 = 12</div>
+                <div>• <strong>1 ilə vurma:</strong> Hər ədəd 1 ilə vurulursa özü qalır (5 × 1 = 5)</div>
+                <div>• <strong>10 ilə vurma:</strong> Ədədin arxasına 0 əlavə et (7 × 10 = 70)</div>
               </div>
-            ))}
-          </div>
-
-          <div style={{marginTop:30,padding:"20px",background:"#E8F5E9",borderRadius:12,border:"2px solid #66BB6A"}}>
-            <div style={{fontWeight:800,color:"#1B5E20",marginBottom:10}}>💡 Vurmanın Əsas Qaydaları:</div>
-            <div style={{fontSize:"0.9rem",color:"#444",lineHeight:1.8}}>
-              <div>• <strong>Vurma:</strong> Eyni ədəd bir neçə dəfə toplanır</div>
-              <div>• <strong>Məsələn:</strong> 3 × 4 = 3 + 3 + 3 + 3 = 12</div>
-              <div>• <strong>Sırası fərqlənmir:</strong> 3 × 4 = 4 × 3 = 12</div>
-              <div>• <strong>1 ilə vurma:</strong> Hər ədəd 1 ilə vurulursa özü qalır (5 × 1 = 5)</div>
-              <div>• <strong>10 ilə vurma:</strong> Ədədin arxasına 0 əlavə et (7 × 10 = 70)</div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 }
 
@@ -1030,103 +1248,115 @@ function SectionKosmos() {
   );
 }
 
-function SectionSular() {
+function SectionSularVeOkeanlar() {
   const [selWater, setSelWater] = useState(null);
+  const [subTab, setSubTab] = useState("sular");
+  const subTabs = [
+    {id:"sular",   label:"💧 Su Növləri"},
+    {id:"okeanlar",label:"🌊 Okeanlar"},
+  ];
 
   return (
     <div>
-      <div className="card" style={{borderLeft:"6px solid #0277BD"}}>
-        <div className="sec-title" style={{color:"#0277BD"}}>💧 Su Növləri — 4 növ var!</div>
-        <p style={{fontSize:"0.97rem",color:"#444",marginBottom:12,lineHeight:1.7}}>
-          Dünyamızın <strong style={{color:"#0277BD"}}>70%-i su ilə örtülüdür!</strong> 🌍
-          Su 4 əsas növə bölünür: <strong>Okean, Dəniz, Göl, Çay</strong>.
-          Hər biri bir-birindən <strong>ölçüsünə, suyuna</strong> görə fərqlənir!
-        </p>
+      <div style={{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"center",marginBottom:16}}>
+        {subTabs.map(s=>(
+          <button key={s.id} onClick={()=>setSubTab(s.id)} style={{
+            background:subTab===s.id?"linear-gradient(135deg,#0277BD,#0288D1)":"rgba(255,255,255,0.12)",
+            color:subTab===s.id?"white":"#E3F2FD",
+            border:`2px solid ${subTab===s.id?"#0288D1":"rgba(255,255,255,0.25)"}`,
+            borderRadius:30,padding:"7px 16px",fontSize:"0.85rem",fontWeight:800,
+            cursor:"pointer",fontFamily:"'Nunito',sans-serif",whiteSpace:"nowrap",
+            boxShadow:subTab===s.id?"0 4px 14px rgba(2,119,189,0.4)":"none",
+            transition:"all 0.2s",
+          }}>{s.label}</button>
+        ))}
+      </div>
 
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:10,marginBottom:16}}>
-          {WATER_TYPES.map((w,i)=>(
-            <div key={w.id}
-              onClick={()=>setSelWater(selWater===i?null:i)}
-              style={{
-                background:`${w.color}18`,
-                border:`2px solid ${selWater===i?w.color:w.color+"55"}`,
-                borderRadius:14,padding:"13px 12px",cursor:"pointer",
-                transform:selWater===i?"translateY(-3px)":"none",
-                transition:"all 0.2s",
-                boxShadow:selWater===i?`0 6px 18px ${w.color}44`:"0 2px 8px rgba(0,0,0,0.07)"
-              }}>
-              <div style={{fontSize:"2rem",marginBottom:6}}>{w.icon}</div>
-              <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"1rem",fontWeight:800,color:w.color,marginBottom:4}}>{w.name}</div>
-              <div style={{fontSize:"0.77rem",color:"#555",lineHeight:1.5,marginBottom:8}}>{w.short}</div>
-              <span style={{background:w.color,color:"white",borderRadius:20,padding:"2px 9px",fontSize:"0.62rem",fontWeight:800}}>{w.tag}</span>
-              <div style={{fontSize:"0.7rem",color:"#888",marginTop:6,fontWeight:700}}>👆 daha çox üçün bas</div>
-            </div>
-          ))}
-        </div>
-
-        {selWater !== null && (()=>{
-          const w = WATER_TYPES[selWater];
-          return (
-            <div style={{background:`${w.color}12`,border:`2px solid ${w.color}66`,borderRadius:14,padding:"14px 13px",marginBottom:14,animation:"fadeIn 0.3s ease"}}>
-              <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"1.1rem",color:w.color,marginBottom:10,display:"flex",alignItems:"center",gap:8}}>
-                {w.icon} {w.name} haqqında ətraflı:
-              </div>
-              {w.facts.map((f,fi)=>(
-                <div key={fi} style={{display:"flex",gap:9,alignItems:"flex-start",marginBottom:7}}>
-                  <div style={{background:w.color,color:"white",borderRadius:"50%",width:20,height:20,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"0.65rem",fontWeight:900,flexShrink:0,marginTop:1}}>{fi+1}</div>
-                  <span style={{fontSize:"0.87rem",color:"#333",lineHeight:1.6,fontWeight:600}}>{f}</span>
+      {subTab==="sular" && (
+        <div>
+          <div className="card" style={{borderLeft:"6px solid #0277BD"}}>
+            <div className="sec-title" style={{color:"#0277BD"}}>💧 Su Növləri — 4 növ var!</div>
+            <p style={{fontSize:"0.97rem",color:"#444",marginBottom:12,lineHeight:1.7}}>
+              Dünyamızın <strong style={{color:"#0277BD"}}>70%-i su ilə örtülüdür!</strong> 🌍
+              Su 4 əsas növə bölünür: <strong>Okean, Dəniz, Göl, Çay</strong>.
+            </p>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:10,marginBottom:16}}>
+              {WATER_TYPES.map((w,i)=>(
+                <div key={w.id} onClick={()=>setSelWater(selWater===i?null:i)} style={{
+                  background:`${w.color}18`,
+                  border:`2px solid ${selWater===i?w.color:w.color+"55"}`,
+                  borderRadius:14,padding:"13px 12px",cursor:"pointer",
+                  transform:selWater===i?"translateY(-3px)":"none",
+                  transition:"all 0.2s",
+                  boxShadow:selWater===i?`0 6px 18px ${w.color}44`:"0 2px 8px rgba(0,0,0,0.07)"
+                }}>
+                  <div style={{fontSize:"2rem",marginBottom:6}}>{w.icon}</div>
+                  <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"1rem",fontWeight:800,color:w.color,marginBottom:4}}>{w.name}</div>
+                  <div style={{fontSize:"0.77rem",color:"#555",lineHeight:1.5,marginBottom:8}}>{w.short}</div>
+                  <span style={{background:w.color,color:"white",borderRadius:20,padding:"2px 9px",fontSize:"0.62rem",fontWeight:800}}>{w.tag}</span>
+                  <div style={{fontSize:"0.7rem",color:"#888",marginTop:6,fontWeight:700}}>👆 daha çox üçün bas</div>
                 </div>
               ))}
-              <div style={{marginTop:10,padding:"8px 11px",background:"rgba(0,0,0,0.05)",borderRadius:10,fontSize:"0.8rem",color:"#555",fontWeight:700}}>
-                💡 <strong>Fərqi:</strong> {w.diff}
-              </div>
             </div>
-          );
-        })()}
-
-        <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"1rem",color:"#0277BD",marginBottom:8}}>🔍 Fərqlər Cədvəli</div>
-        <div style={{fontSize:"0.7rem",color:"#90CAF9",textAlign:"center",marginBottom:5}}>← sürüşdürün →</div>
-        <div className="table-scroll">
-          <table className="planet-table">
-            <thead>
-              <tr>{["Su növü","Ölçüsü","Duzu var?","Hərəkət?","Bizdə var?"].map(h=><th key={h}>{h}</th>)}</tr>
-            </thead>
-            <tbody>
-              {WATER_TYPES.map(w=>(
-                <tr key={w.id} onClick={()=>setSelWater(WATER_TYPES.findIndex(x=>x.id===w.id))}>
-                  <td style={{fontWeight:900,color:w.color}}>{w.icon} {w.name}</td>
-                  <td>{w.size}</td>
-                  <td>{w.salt}</td>
-                  <td>{w.move}</td>
-                  <td style={{fontWeight:800}}>{w.local}</td>
-                </tr>
+            {selWater !== null && (()=>{
+              const w = WATER_TYPES[selWater];
+              return (
+                <div style={{background:`${w.color}12`,border:`2px solid ${w.color}66`,borderRadius:14,padding:"14px 13px",marginBottom:14,animation:"fadeIn 0.3s ease"}}>
+                  <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"1.1rem",color:w.color,marginBottom:10,display:"flex",alignItems:"center",gap:8}}>
+                    {w.icon} {w.name} haqqında ətraflı:
+                  </div>
+                  {w.facts.map((f,fi)=>(
+                    <div key={fi} style={{display:"flex",gap:9,alignItems:"flex-start",marginBottom:7}}>
+                      <div style={{background:w.color,color:"white",borderRadius:"50%",width:20,height:20,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"0.65rem",fontWeight:900,flexShrink:0,marginTop:1}}>{fi+1}</div>
+                      <span style={{fontSize:"0.87rem",color:"#333",lineHeight:1.6,fontWeight:600}}>{f}</span>
+                    </div>
+                  ))}
+                  <div style={{marginTop:10,padding:"8px 11px",background:"rgba(0,0,0,0.05)",borderRadius:10,fontSize:"0.8rem",color:"#555",fontWeight:700}}>
+                    💡 <strong>Fərqi:</strong> {w.diff}
+                  </div>
+                </div>
+              );
+            })()}
+            <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"1rem",color:"#0277BD",marginBottom:8}}>🔍 Fərqlər Cədvəli</div>
+            <div className="table-scroll">
+              <table className="planet-table">
+                <thead><tr>{["Su növü","Ölçüsü","Duzu var?","Hərəkət?","Bizdə var?"].map(h=><th key={h}>{h}</th>)}</tr></thead>
+                <tbody>
+                  {WATER_TYPES.map(w=>(
+                    <tr key={w.id} onClick={()=>setSelWater(WATER_TYPES.findIndex(x=>x.id===w.id))}>
+                      <td style={{fontWeight:900,color:w.color}}>{w.icon} {w.name}</td>
+                      <td>{w.size}</td><td>{w.salt}</td><td>{w.move}</td>
+                      <td style={{fontWeight:800}}>{w.local}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <FunFact text="Çay suyu dağdan aşağı axır. Bir damla su dağdan dənizə çatmaq üçün yüzlərlə km yol keçir! 🏔️➡️🌊"/>
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}} className="water-bh-grid">
+            <div className="card" style={{borderLeft:"6px solid #2E7D32",marginBottom:0}}>
+              <div className="sec-title" style={{color:"#2E7D32",fontSize:"1rem"}}>😊 Faydaları</div>
+              {WATER_BENEFITS.map((b,i)=>(
+                <div key={i} style={{display:"flex",gap:9,alignItems:"flex-start",marginBottom:8}}>
+                  <span style={{fontSize:"1.2rem",flexShrink:0}}>{b.icon}</span>
+                  <span style={{fontSize:"0.82rem",color:"#333",lineHeight:1.5,fontWeight:600}}>{b.text}</span>
+                </div>
               ))}
-            </tbody>
-          </table>
-        </div>
-        <FunFact text="Çay suyu dağdan aşağı axır. Bir damla su dağdan dənizə çatmaq üçün yüzlərlə km yol keçir! 🏔️➡️🌊"/>
-      </div>
-
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}} className="water-bh-grid">
-        <div className="card" style={{borderLeft:"6px solid #2E7D32",marginBottom:0}}>
-          <div className="sec-title" style={{color:"#2E7D32",fontSize:"1rem"}}>😊 Faydaları</div>
-          {WATER_BENEFITS.map((b,i)=>(
-            <div key={i} style={{display:"flex",gap:9,alignItems:"flex-start",marginBottom:8}}>
-              <span style={{fontSize:"1.2rem",flexShrink:0}}>{b.icon}</span>
-              <span style={{fontSize:"0.82rem",color:"#333",lineHeight:1.5,fontWeight:600}}>{b.text}</span>
             </div>
-          ))}
-        </div>
-        <div className="card" style={{borderLeft:"6px solid #C62828",marginBottom:0}}>
-          <div className="sec-title" style={{color:"#C62828",fontSize:"1rem"}}>⚠️ Zərərləri</div>
-          {WATER_HARMS.map((h,i)=>(
-            <div key={i} style={{display:"flex",gap:9,alignItems:"flex-start",marginBottom:8}}>
-              <span style={{fontSize:"1.2rem",flexShrink:0}}>{h.icon}</span>
-              <span style={{fontSize:"0.82rem",color:"#333",lineHeight:1.5,fontWeight:600}}>{h.text}</span>
+            <div className="card" style={{borderLeft:"6px solid #C62828",marginBottom:0}}>
+              <div className="sec-title" style={{color:"#C62828",fontSize:"1rem"}}>⚠️ Zərərləri</div>
+              {WATER_HARMS.map((h,i)=>(
+                <div key={i} style={{display:"flex",gap:9,alignItems:"flex-start",marginBottom:8}}>
+                  <span style={{fontSize:"1.2rem",flexShrink:0}}>{h.icon}</span>
+                  <span style={{fontSize:"0.82rem",color:"#333",lineHeight:1.5,fontWeight:600}}>{h.text}</span>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
-      </div>
+      )}
+      {subTab==="okeanlar" && <SectionOkeanlar/>}
     </div>
   );
 }
@@ -1136,29 +1366,22 @@ function SectionOlkem() {
     <div>
       <div className="card" style={{borderLeft:"6px solid #1565C0"}}>
         <div className="sec-title" style={{color:"#1565C0"}}>🏛️ Dövlət və Sərhəd</div>
-
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:14}} className="country-intro-grid">
           <div style={{background:"#E3F2FD",borderRadius:13,padding:"12px 13px",border:"2px solid #90CAF9"}}>
             <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"0.98rem",color:"#1565C0",marginBottom:7}}>🏛️ Dövlət nədir?</div>
             <p style={{fontSize:"0.82rem",color:"#333",lineHeight:1.7}}>
-              <strong>Dövlət</strong> — böyük bir ailə kimidir. Bir ərazidə yaşayan bütün insanları
-              idarə edir. Öz <strong>qaydaları</strong>, öz <strong>başçısı</strong> (prezident)
-              və öz <strong>bayrağı</strong> olur. 🏡
-              <br/><br/>
-              Dövlət məktəblər, xəstəxanalar, yollar tikir. Bizimçün qaydalar qoyur! 🏫🏥🛣️
+              <strong>Dövlət</strong> — böyük bir ailə kimidir. Bir ərazidə yaşayan bütün insanları idarə edir. Öz <strong>qaydaları</strong>, öz <strong>başçısı</strong> (prezident) və öz <strong>bayrağı</strong> olur. 🏡<br/><br/>
+              Dövlət məktəblər, xəstəxanalar, yollar tikir. 🏫🏥🛣️
             </p>
           </div>
           <div style={{background:"#E8F5E9",borderRadius:13,padding:"12px 13px",border:"2px solid #A5D6A7"}}>
             <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"0.98rem",color:"#2E7D32",marginBottom:7}}>🗺️ Sərhəd nədir?</div>
             <p style={{fontSize:"0.82rem",color:"#333",lineHeight:1.7}}>
-              <strong>Sərhəd</strong> — bir ölkənin bitdiyi, başqa ölkənin başladığı xəttdir.
-              Xəritədə cizgi kimi görünür. Real həyatda isə <strong>keçid məntəqələri</strong> olur. 🛃
-              <br/><br/>
+              <strong>Sərhəd</strong> — bir ölkənin bitdiyi, başqa ölkənin başladığı xəttdir. Xəritədə cizgi kimi görünür. Real həyatda isə <strong>keçid məntəqələri</strong> olur. 🛃<br/><br/>
               Xarici ölkəyə keçmək üçün mütləq <strong>pasport</strong> lazımdır! ✈️🛂
             </p>
           </div>
         </div>
-
         <InfoBox color="#1565C0">
           📌 Azərbaycan Respublikasının prezidenti dövlət başçısıdır. 🏛️<br/>
           📌 Hər dövlətin öz qanunları (qaydaları) var — hamı onlara riayət etməlidir. ⚖️<br/>
@@ -1171,14 +1394,11 @@ function SectionOlkem() {
         <p style={{fontSize:"0.9rem",color:"#555",marginBottom:14,lineHeight:1.7}}>
           Bizim ölkəmizin adı <strong style={{color:"#0092BC"}}>Azərbaycan Respublikasıdır</strong>.
           Paytaxtımız <strong style={{color:"#EF3340"}}>Bakı</strong> şəhəridir! 🌆
-          Hər dövlətin 3 rəsmi simvolu olur — bayraq, gerb, himnimiz.
         </p>
-
         <div style={{display:"flex",flexWrap:"wrap",alignItems:"center",gap:20,marginBottom:16,justifyContent:"center"}}>
           <div>
             <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"0.95rem",color:"#333",marginBottom:8,textAlign:"center"}}>🚩 Azərbaycan Bayrağı</div>
-            <svg viewBox="0 0 300 180" width="192" height="115"
-              style={{display:"block",borderRadius:10,boxShadow:"0 6px 22px rgba(0,0,0,0.22)",border:"1px solid #ccc"}}>
+            <svg viewBox="0 0 300 180" width="192" height="115" style={{display:"block",borderRadius:10,boxShadow:"0 6px 22px rgba(0,0,0,0.22)",border:"1px solid #ccc"}}>
               <rect x="0" y="0"   width="300" height="60"  fill="#0092BC"/>
               <rect x="0" y="60"  width="300" height="60"  fill="#EF3340"/>
               <rect x="0" y="120" width="300" height="60"  fill="#509E2F"/>
@@ -1237,13 +1457,12 @@ function SectionOlkem() {
   );
 }
 
-// ─── COMBINED: TƏQVIM (Aylar + Həftələr + Günlər) ──────────────────────────
 function SectionTeqvim() {
   const [subTab, setSubTab] = useState("aylar");
   const subTabs = [
-    {id:"aylar",  label:"📅 Aylar"},
+    {id:"aylar",   label:"📅 Aylar"},
     {id:"hefteler",label:"📆 Həftələr"},
-    {id:"gunler", label:"🗓️ Günlər"},
+    {id:"gunler",  label:"🗓️ Günlər"},
   ];
   return (
     <div>
@@ -1267,133 +1486,14 @@ function SectionTeqvim() {
   );
 }
 
-// ─── COMBINED SULAR + OKEANLAR ─────────────────────────────────────────────
-function SectionSularVeOkeanlar() {
-  const [selWater, setSelWater] = useState(null);
-  const [subTab, setSubTab] = useState("sular");
-  const subTabs = [
-    {id:"sular",   label:"💧 Su Növləri"},
-    {id:"okeanlar",label:"🌊 Okeanlar"},
-  ];
-
-  return (
-    <div>
-      <div style={{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"center",marginBottom:16}}>
-        {subTabs.map(s=>(
-          <button key={s.id} onClick={()=>setSubTab(s.id)} style={{
-            background:subTab===s.id?"linear-gradient(135deg,#0277BD,#0288D1)":"rgba(255,255,255,0.12)",
-            color:subTab===s.id?"white":"#E3F2FD",
-            border:`2px solid ${subTab===s.id?"#0288D1":"rgba(255,255,255,0.25)"}`,
-            borderRadius:30,padding:"7px 16px",fontSize:"0.85rem",fontWeight:800,
-            cursor:"pointer",fontFamily:"'Nunito',sans-serif",whiteSpace:"nowrap",
-            boxShadow:subTab===s.id?"0 4px 14px rgba(2,119,189,0.4)":"none",
-            transition:"all 0.2s",
-          }}>{s.label}</button>
-        ))}
-      </div>
-
-      {subTab==="sular" && (
-        <div>
-          <div className="card" style={{borderLeft:"6px solid #0277BD"}}>
-            <div className="sec-title" style={{color:"#0277BD"}}>💧 Su Növləri — 4 növ var!</div>
-            <p style={{fontSize:"0.97rem",color:"#444",marginBottom:12,lineHeight:1.7}}>
-              Dünyamızın <strong style={{color:"#0277BD"}}>70%-i su ilə örtülüdür!</strong> 🌍
-              Su 4 əsas növə bölünür: <strong>Okean, Dəniz, Göl, Çay</strong>.
-              Hər biri bir-birindən <strong>ölçüsünə, suyuna</strong> görə fərqlənir!
-            </p>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:10,marginBottom:16}}>
-              {WATER_TYPES.map((w,i)=>(
-                <div key={w.id} onClick={()=>setSelWater(selWater===i?null:i)} style={{
-                  background:`${w.color}18`,
-                  border:`2px solid ${selWater===i?w.color:w.color+"55"}`,
-                  borderRadius:14,padding:"13px 12px",cursor:"pointer",
-                  transform:selWater===i?"translateY(-3px)":"none",
-                  transition:"all 0.2s",
-                  boxShadow:selWater===i?`0 6px 18px ${w.color}44`:"0 2px 8px rgba(0,0,0,0.07)"
-                }}>
-                  <div style={{fontSize:"2rem",marginBottom:6}}>{w.icon}</div>
-                  <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"1rem",fontWeight:800,color:w.color,marginBottom:4}}>{w.name}</div>
-                  <div style={{fontSize:"0.77rem",color:"#555",lineHeight:1.5,marginBottom:8}}>{w.short}</div>
-                  <span style={{background:w.color,color:"white",borderRadius:20,padding:"2px 9px",fontSize:"0.62rem",fontWeight:800}}>{w.tag}</span>
-                  <div style={{fontSize:"0.7rem",color:"#888",marginTop:6,fontWeight:700}}>👆 daha çox üçün bas</div>
-                </div>
-              ))}
-            </div>
-            {selWater !== null && (()=>{
-              const w = WATER_TYPES[selWater];
-              return (
-                <div style={{background:`${w.color}12`,border:`2px solid ${w.color}66`,borderRadius:14,padding:"14px 13px",marginBottom:14,animation:"fadeIn 0.3s ease"}}>
-                  <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"1.1rem",color:w.color,marginBottom:10,display:"flex",alignItems:"center",gap:8}}>
-                    {w.icon} {w.name} haqqında ətraflı:
-                  </div>
-                  {w.facts.map((f,fi)=>(
-                    <div key={fi} style={{display:"flex",gap:9,alignItems:"flex-start",marginBottom:7}}>
-                      <div style={{background:w.color,color:"white",borderRadius:"50%",width:20,height:20,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"0.65rem",fontWeight:900,flexShrink:0,marginTop:1}}>{fi+1}</div>
-                      <span style={{fontSize:"0.87rem",color:"#333",lineHeight:1.6,fontWeight:600}}>{f}</span>
-                    </div>
-                  ))}
-                  <div style={{marginTop:10,padding:"8px 11px",background:"rgba(0,0,0,0.05)",borderRadius:10,fontSize:"0.8rem",color:"#555",fontWeight:700}}>
-                    💡 <strong>Fərqi:</strong> {w.diff}
-                  </div>
-                </div>
-              );
-            })()}
-            <div style={{fontFamily:"'Baloo 2',cursive",fontSize:"1rem",color:"#0277BD",marginBottom:8}}>🔍 Fərqlər Cədvəli</div>
-            <div style={{fontSize:"0.7rem",color:"#90CAF9",textAlign:"center",marginBottom:5}}>← sürüşdürün →</div>
-            <div className="table-scroll">
-              <table className="planet-table">
-                <thead>
-                  <tr>{["Su növü","Ölçüsü","Duzu var?","Hərəkət?","Bizdə var?"].map(h=><th key={h}>{h}</th>)}</tr>
-                </thead>
-                <tbody>
-                  {WATER_TYPES.map(w=>(
-                    <tr key={w.id} onClick={()=>setSelWater(WATER_TYPES.findIndex(x=>x.id===w.id))}>
-                      <td style={{fontWeight:900,color:w.color}}>{w.icon} {w.name}</td>
-                      <td>{w.size}</td><td>{w.salt}</td><td>{w.move}</td>
-                      <td style={{fontWeight:800}}>{w.local}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <FunFact text="Çay suyu dağdan aşağı axır. Bir damla su dağdan dənizə çatmaq üçün yüzlərlə km yol keçir! 🏔️➡️🌊"/>
-          </div>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}} className="water-bh-grid">
-            <div className="card" style={{borderLeft:"6px solid #2E7D32",marginBottom:0}}>
-              <div className="sec-title" style={{color:"#2E7D32",fontSize:"1rem"}}>😊 Faydaları</div>
-              {WATER_BENEFITS.map((b,i)=>(
-                <div key={i} style={{display:"flex",gap:9,alignItems:"flex-start",marginBottom:8}}>
-                  <span style={{fontSize:"1.2rem",flexShrink:0}}>{b.icon}</span>
-                  <span style={{fontSize:"0.82rem",color:"#333",lineHeight:1.5,fontWeight:600}}>{b.text}</span>
-                </div>
-              ))}
-            </div>
-            <div className="card" style={{borderLeft:"6px solid #C62828",marginBottom:0}}>
-              <div className="sec-title" style={{color:"#C62828",fontSize:"1rem"}}>⚠️ Zərərləri</div>
-              {WATER_HARMS.map((h,i)=>(
-                <div key={i} style={{display:"flex",gap:9,alignItems:"flex-start",marginBottom:8}}>
-                  <span style={{fontSize:"1.2rem",flexShrink:0}}>{h.icon}</span>
-                  <span style={{fontSize:"0.82rem",color:"#333",lineHeight:1.5,fontWeight:600}}>{h.text}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {subTab==="okeanlar" && <SectionOkeanlar/>}
-    </div>
-  );
-}
-
 // ─── MAIN APP ──────────────────────────────────────────────────────────────
 const TABS = [
-  {id:"olkem",    label:"Ölkəm"},
-  {id:"sular",    label:"💧 Sular & Okeanlar"},
-  {id:"teqvim",   label:"📅 Təqvim"},
+  {id:"olkem",     label:"Ölkəm"},
+  {id:"sular",     label:"💧 Sular & Okeanlar"},
+  {id:"teqvim",    label:"📅 Təqvim"},
   {id:"materikler",label:"🌍 Materiklər"},
-  {id:"kosmos",   label:"🚀 Kosmos"},
-  {id:"test",     label:"🎯 Test"},
+  {id:"kosmos",    label:"🚀 Kosmos"},
+  {id:"test",      label:"🎯 Test"},
   {id:"riyaziyyat",label:"🔢 RIYAZIYYAT"},
 ];
 
