@@ -812,7 +812,7 @@ function SectionOlkem() {
       </div>
 
       <div className="card" style={{borderLeft:"6px solid #EF3340"}}>
-        <div className="sec-title" style={{color:"#1a237e"}}>🇦🇿 Azərbaycan Respublikası!</div>
+        <div className="sec-title" style={{color:"#1a237e"}}>Azərbaycan Respublikası!</div>
         <p style={{fontSize:"0.9rem",color:"#555",marginBottom:14,lineHeight:1.7}}>
           Bizim ölkəmizin adı <strong style={{color:"#0092BC"}}>Azərbaycan Respublikasıdır</strong>.
           Paytaxtımız <strong style={{color:"#EF3340"}}>Bakı</strong> şəhəridir! 🌆
