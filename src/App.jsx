@@ -249,138 +249,68 @@ const QUIZ_QUESTIONS = [
 ];
 
 const MATH_ADD = [
-  { id:1,  q:"7 + X = 14", sub:"X = ?", opts:["5","6","7","8"], ans:"7" },
-  { id:2,  q:"X + 9 = 21", sub:"X = ?", opts:["10","11","12","13"], ans:"12" },
-  { id:3,  q:"5 + X = 16", sub:"X = ?", opts:["10","11","12","13"], ans:"11" },
-  { id:4,  q:"X + 8 = 20", sub:"X = ?", opts:["10","11","12","13"], ans:"12" },
-  { id:5,  q:"12 + X = 25", sub:"X = ?", opts:["12","13","14","15"], ans:"13" },
-  { id:6,  q:"X + 7 = 19", sub:"X = ?", opts:["10","11","12","13"], ans:"12" },
-  { id:7,  q:"6 + X = 15", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
-  { id:8,  q:"X + 10 = 23", sub:"X = ?", opts:["12","13","14","15"], ans:"13" },
-  { id:9,  q:"9 + X = 18", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
-  { id:10, q:"X + 11 = 24", sub:"X = ?", opts:["12","13","14","15"], ans:"13" },
-  { id:11, q:"8 + X = 17", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
-  { id:12, q:"X + 6 = 14", sub:"X = ?", opts:["7","8","9","10"], ans:"8" },
-  { id:13, q:"10 + X = 22", sub:"X = ?", opts:["11","12","13","14"], ans:"12" },
-  { id:14, q:"X + 12 = 27", sub:"X = ?", opts:["14","15","16","17"], ans:"15" },
-  { id:15, q:"7 + X = 18", sub:"X = ?", opts:["10","11","12","13"], ans:"11" },
-  { id:16, q:"X + 5 = 13", sub:"X = ?", opts:["7","8","9","10"], ans:"8" },
-  { id:17, q:"13 + X = 29", sub:"X = ?", opts:["14","15","16","17"], ans:"16" },
-  { id:18, q:"X + 9 = 21", sub:"X = ?", opts:["10","11","12","13"], ans:"12" },
-  { id:19, q:"4 + X = 17", sub:"X = ?", opts:["12","13","14","15"], ans:"13" },
-  { id:20, q:"X + 14 = 31", sub:"X = ?", opts:["16","17","18","19"], ans:"17" },
-  { id:21, q:"11 + X = 26", sub:"X = ?", opts:["13","14","15","16"], ans:"15" },
-  { id:22, q:"X + 3 = 10", sub:"X = ?", opts:["6","7","8","9"], ans:"7" },
-  { id:23, q:"X + 8 = 22", sub:"X = ?", opts:["12","13","14","15"], ans:"14" },
-  { id:24, q:"9 + X = 23", sub:"X = ?", opts:["13","14","15","16"], ans:"14" },
-  { id:25, q:"X + 7 = 18", sub:"X = ?", opts:["10","11","12","13"], ans:"11" },
+  { id:1,  q:"9 + X = 17",  sub:"X = ?", opts:["6","7","8","9"], ans:"8" },
+  { id:2,  q:"X + 8 = 19",  sub:"X = ?", opts:["9","10","11","12"], ans:"11" },
+  { id:3,  q:"6 + X = 15",  sub:"X = ?", opts:["7","8","9","10"], ans:"9" },
+  { id:4,  q:"X + 7 = 16",  sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
+  { id:5,  q:"13 + X = 24", sub:"X = ?", opts:["9","10","11","12"], ans:"11" },
+  { id:6,  q:"X + 5 = 14",  sub:"X = ?", opts:["7","8","9","10"], ans:"9" },
+  { id:7,  q:"12 + X = 20", sub:"X = ?", opts:["6","7","8","9"], ans:"8" },
+  { id:8,  q:"X + 9 = 23",  sub:"X = ?", opts:["12","13","14","15"], ans:"14" },
+  { id:9,  q:"8 + X = 21",  sub:"X = ?", opts:["11","12","13","14"], ans:"13" },
+  { id:10, q:"X + 11 = 26", sub:"X = ?", opts:["13","14","15","16"], ans:"15" },
 ];
 
 const MATH_SUB = [
-  { id:1,  q:"20 - X = 11", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
-  { id:2,  q:"X - 5 = 9", sub:"X = ?", opts:["13","14","15","16"], ans:"14" },
-  { id:3,  q:"30 - X = 17", sub:"X = ?", opts:["12","13","14","15"], ans:"13" },
-  { id:4,  q:"25 - X = 14", sub:"X = ?", opts:["10","11","12","13"], ans:"11" },
-  { id:5,  q:"X - 3 = 8", sub:"X = ?", opts:["10","11","12","13"], ans:"11" },
-  { id:6,  q:"22 - X = 13", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
-  { id:7,  q:"X - 6 = 10", sub:"X = ?", opts:["15","16","17","18"], ans:"16" },
-  { id:8,  q:"18 - X = 9", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
-  { id:9,  q:"X - 2 = 12", sub:"X = ?", opts:["13","14","15","16"], ans:"14" },
-  { id:10, q:"27 - X = 18", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
-  { id:11, q:"24 - X = 15", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
-  { id:12, q:"X - 8 = 4", sub:"X = ?", opts:["12","13","14","15"], ans:"12" },
-  { id:13, q:"35 - X = 24", sub:"X = ?", opts:["10","11","12","13"], ans:"11" },
-  { id:14, q:"X - 4 = 10", sub:"X = ?", opts:["14","15","16","17"], ans:"14" },
-  { id:15, q:"28 - X = 19", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
-  { id:16, q:"X - 7 = 11", sub:"X = ?", opts:["15","16","17","18"], ans:"18" },
-  { id:17, q:"32 - X = 25", sub:"X = ?", opts:["6","7","8","9"], ans:"7" },
-  { id:18, q:"X - 9 = 7", sub:"X = ?", opts:["14","15","16","17"], ans:"16" },
-  { id:19, q:"21 - X = 12", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
-  { id:20, q:"X - 11 = 8", sub:"X = ?", opts:["18","19","20","21"], ans:"19" },
-  { id:21, q:"26 - X = 16", sub:"X = ?", opts:["9","10","11","12"], ans:"10" },
-  { id:22, q:"X - 10 = 4", sub:"X = ?", opts:["14","15","16","17"], ans:"14" },
-  { id:23, q:"19 - X = 10", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
-  { id:24, q:"X - 12 = 9", sub:"X = ?", opts:["18","19","20","21"], ans:"21" },
-  { id:25, q:"33 - X = 23", sub:"X = ?", opts:["9","10","11","12"], ans:"10" },
+  { id:1,  q:"21 - X = 13", sub:"X = ?", opts:["6","7","8","9"], ans:"8" },
+  { id:2,  q:"X - 4 = 12",  sub:"X = ?", opts:["14","15","16","17"], ans:"16" },
+  { id:3,  q:"30 - X = 18", sub:"X = ?", opts:["10","11","12","13"], ans:"12" },
+  { id:4,  q:"25 - X = 16", sub:"X = ?", opts:["7","8","9","10"], ans:"9" },
+  { id:5,  q:"X - 6 = 9",   sub:"X = ?", opts:["13","14","15","16"], ans:"15" },
+  { id:6,  q:"19 - X = 11", sub:"X = ?", opts:["6","7","8","9"], ans:"8" },
+  { id:7,  q:"X - 8 = 7",   sub:"X = ?", opts:["13","14","15","16"], ans:"15" },
+  { id:8,  q:"34 - X = 19", sub:"X = ?", opts:["13","14","15","16"], ans:"15" },
+  { id:9,  q:"X - 9 = 5",   sub:"X = ?", opts:["12","13","14","15"], ans:"14" },
+  { id:10, q:"27 - X = 14", sub:"X = ?", opts:["11","12","13","14"], ans:"13" },
 ];
 
 const MATH_MUL = [
-  { id:1,  q:"X × 3 = 21", sub:"X = ?", opts:["5","6","7","8"], ans:"7" },
-  { id:2,  q:"5 × X = 40", sub:"X = ?", opts:["6","7","8","9"], ans:"8" },
-  { id:3,  q:"X × 4 = 32", sub:"X = ?", opts:["6","7","8","9"], ans:"8" },
-  { id:4,  q:"9 × X = 36", sub:"X = ?", opts:["3","4","5","6"], ans:"4" },
-  { id:5,  q:"X × 6 = 30", sub:"X = ?", opts:["4","5","6","7"], ans:"5" },
-  { id:6,  q:"7 × X = 49", sub:"X = ?", opts:["6","7","8","9"], ans:"7" },
-  { id:7,  q:"X × 8 = 56", sub:"X = ?", opts:["6","7","8","9"], ans:"7" },
-  { id:8,  q:"3 × X = 15", sub:"X = ?", opts:["4","5","6","7"], ans:"5" },
-  { id:9,  q:"X × 2 = 14", sub:"X = ?", opts:["6","7","8","9"], ans:"7" },
-  { id:10, q:"4 × X = 28", sub:"X = ?", opts:["6","7","8","9"], ans:"7" },
-  { id:11, q:"X × 9 = 45", sub:"X = ?", opts:["4","5","6","7"], ans:"5" },
-  { id:12, q:"6 × X = 42", sub:"X = ?", opts:["6","7","8","9"], ans:"7" },
-  { id:13, q:"X × 7 = 56", sub:"X = ?", opts:["7","8","9","10"], ans:"8" },
-  { id:14, q:"8 × X = 64", sub:"X = ?", opts:["7","8","9","10"], ans:"8" },
-  { id:15, q:"X × 5 = 35", sub:"X = ?", opts:["6","7","8","9"], ans:"7" },
-  { id:16, q:"2 × X = 18", sub:"X = ?", opts:["7","8","9","10"], ans:"9" },
-  { id:17, q:"X × 4 = 20", sub:"X = ?", opts:["4","5","6","7"], ans:"5" },
-  { id:18, q:"9 × X = 72", sub:"X = ?", opts:["7","8","9","10"], ans:"8" },
-  { id:19, q:"X × 10 = 80", sub:"X = ?", opts:["7","8","9","10"], ans:"8" },
-  { id:20, q:"3 × X = 24", sub:"X = ?", opts:["6","7","8","9"], ans:"8" },
-  { id:21, q:"X × 6 = 48", sub:"X = ?", opts:["7","8","9","10"], ans:"8" },
-  { id:22, q:"7 × X = 35", sub:"X = ?", opts:["4","5","6","7"], ans:"5" },
-  { id:23, q:"X × 8 = 72", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
-  { id:24, q:"4 × X = 36", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
-  { id:25, q:"X × 5 = 45", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
+  { id:1,  q:"X × 3 = 24", sub:"X = ?", opts:["6","7","8","9"], ans:"8" },
+  { id:2,  q:"6 × X = 36", sub:"X = ?", opts:["4","5","6","7"], ans:"6" },
+  { id:3,  q:"X × 4 = 28", sub:"X = ?", opts:["5","6","7","8"], ans:"7" },
+  { id:4,  q:"9 × X = 54", sub:"X = ?", opts:["4","5","6","7"], ans:"6" },
+  { id:5,  q:"X × 7 = 49", sub:"X = ?", opts:["5","6","7","8"], ans:"7" },
+  { id:6,  q:"8 × X = 64", sub:"X = ?", opts:["6","7","8","9"], ans:"8" },
+  { id:7,  q:"X × 5 = 45", sub:"X = ?", opts:["7","8","9","10"], ans:"9" },
+  { id:8,  q:"3 × X = 21", sub:"X = ?", opts:["5","6","7","8"], ans:"7" },
+  { id:9,  q:"X × 6 = 54", sub:"X = ?", opts:["7","8","9","10"], ans:"9" },
+  { id:10, q:"4 × X = 32", sub:"X = ?", opts:["6","7","8","9"], ans:"8" },
 ];
 
 const MATH_DIV = [
-  { id:1,  q:"24 ÷ X = 6", sub:"X = ?", opts:["3","4","5","6"], ans:"4" },
-  { id:2,  q:"X ÷ 2 = 6", sub:"X = ?", opts:["10","11","12","13"], ans:"12" },
-  { id:3,  q:"40 ÷ X = 8", sub:"X = ?", opts:["3","4","5","6"], ans:"5" },
-  { id:4,  q:"X ÷ 5 = 3", sub:"X = ?", opts:["12","13","14","15"], ans:"15" },
-  { id:5,  q:"36 ÷ X = 9", sub:"X = ?", opts:["3","4","5","6"], ans:"4" },
-  { id:6,  q:"56 ÷ X = 7", sub:"X = ?", opts:["6","7","8","9"], ans:"8" },
-  { id:7,  q:"X ÷ 3 = 4", sub:"X = ?", opts:["10","11","12","13"], ans:"12" },
-  { id:8,  q:"45 ÷ X = 9", sub:"X = ?", opts:["4","5","6","7"], ans:"5" },
-  { id:9,  q:"X ÷ 4 = 5", sub:"X = ?", opts:["18","19","20","21"], ans:"20" },
-  { id:10, q:"63 ÷ X = 7", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
-  { id:11, q:"X ÷ 6 = 5", sub:"X = ?", opts:["28","29","30","31"], ans:"30" },
-  { id:12, q:"48 ÷ X = 6", sub:"X = ?", opts:["7","8","9","10"], ans:"8" },
-  { id:13, q:"X ÷ 7 = 4", sub:"X = ?", opts:["24","25","28","30"], ans:"28" },
-  { id:14, q:"72 ÷ X = 8", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
-  { id:15, q:"X ÷ 8 = 3", sub:"X = ?", opts:["20","22","24","26"], ans:"24" },
-  { id:16, q:"35 ÷ X = 5", sub:"X = ?", opts:["6","7","8","9"], ans:"7" },
-  { id:17, q:"X ÷ 9 = 2", sub:"X = ?", opts:["16","17","18","19"], ans:"18" },
-  { id:18, q:"54 ÷ X = 6", sub:"X = ?", opts:["8","9","10","11"], ans:"9" },
-  { id:19, q:"X ÷ 5 = 6", sub:"X = ?", opts:["28","29","30","31"], ans:"30" },
-  { id:20, q:"32 ÷ X = 4", sub:"X = ?", opts:["7","8","9","10"], ans:"8" },
-  { id:21, q:"X ÷ 2 = 9", sub:"X = ?", opts:["16","17","18","19"], ans:"18" },
-  { id:22, q:"42 ÷ X = 6", sub:"X = ?", opts:["6","7","8","9"], ans:"7" },
-  { id:23, q:"X ÷ 3 = 7", sub:"X = ?", opts:["18","19","20","21"], ans:"21" },
-  { id:24, q:"64 ÷ X = 8", sub:"X = ?", opts:["7","8","9","10"], ans:"8" },
-  { id:25, q:"X ÷ 6 = 6", sub:"X = ?", opts:["32","34","36","38"], ans:"36" },
+  { id:1,  q:"24 ÷ X = 6", sub:"X = ?", opts:["2","3","4","5"], ans:"4" },
+  { id:2,  q:"X ÷ 3 = 7",  sub:"X = ?", opts:["18","21","24","27"], ans:"21" },
+  { id:3,  q:"40 ÷ X = 5", sub:"X = ?", opts:["6","7","8","9"], ans:"8" },
+  { id:4,  q:"X ÷ 4 = 8",  sub:"X = ?", opts:["28","30","32","36"], ans:"32" },
+  { id:5,  q:"54 ÷ X = 9", sub:"X = ?", opts:["4","5","6","7"], ans:"6" },
+  { id:6,  q:"X ÷ 6 = 6",  sub:"X = ?", opts:["30","34","36","42"], ans:"36" },
+  { id:7,  q:"72 ÷ X = 8", sub:"X = ?", opts:["7","8","9","10"], ans:"9" },
+  { id:8,  q:"X ÷ 5 = 4",  sub:"X = ?", opts:["18","20","22","24"], ans:"20" },
+  { id:9,  q:"63 ÷ X = 7", sub:"X = ?", opts:["7","8","9","10"], ans:"9" },
+  { id:10, q:"X ÷ 2 = 14", sub:"X = ?", opts:["24","26","28","30"], ans:"28" },
 ];
 
 const MATH_PROBLEMS = [
-  { id:1,  q:"🎁 Sənə 10 şokolad verdim və sonra 3 şokolad daha əlavə etdim. Cəmi neçə şokoladın oldu?", opts:["10","12","13","15"], ans:"13" },
-  { id:2,  q:"🎈 Qutuda 15 şar var idi. 8 şar partladı. Neçə şar qaldı?", opts:["5","6","7","9"], ans:"7" },
-  { id:3,  q:"🍎 Alma ağacında 20 alma vardı. 12 almanı yedik. Neçə alma qaldı?", opts:["6","7","8","9"], ans:"8" },
-  { id:4,  q:"📚 Kitab rəfində 5 kitab var idi. Daha 10 kitab qoydular. İndi neçə kitab var?", opts:["10","12","15","16"], ans:"15" },
-  { id:5,  q:"🍪 Mədəniyyət dərnəyində 3 qrup var, hər qrupda 7 uşaq var. Cəmi neçə uşaq var?", opts:["18","20","21","24"], ans:"21" },
-  { id:6,  q:"🎮 24 oyuncaq 4 uşağa bərabər paylandı. Hər uşaq neçə oyuncaq aldı?", opts:["4","5","6","8"], ans:"6" },
-  { id:7,  q:"🏀 Basketbol matçında Mehin 9 xal, Əmir 8 xal qazandı. Cəmi neçə xal oldu?", opts:["15","16","17","19"], ans:"17" },
-  { id:8,  q:"🎭 Teatr səhnəsində 30 oyunçu var idi. 12 oyunçu getdi. Neçə oyunçu qaldı?", opts:["16","17","18","20"], ans:"18" },
-  { id:9,  q:"🌟 Səndə 12 ulduz stiker var. Onları 2 bərabər qrupa bölsən, hər qrupda neçə stiker olar?", opts:["4","5","6","8"], ans:"6" },
-  { id:10, q:"⚽ Futbol oyununda 5 komanda var, hər komandada 8 oyunçu var. Cəmi neçə oyunçu var?", opts:["35","40","45","50"], ans:"40" },
-  { id:11, q:"🎓 Mehin bu il 10 yaşındadır. 8 il sonra neçə yaşında olacaq?", opts:["16","17","18","20"], ans:"18" },
-  { id:12, q:"🎂 Doğum günü təntənəsinə 6 qız və 9 oğlan gəldi. Cəmi neçə uşaq gəldi?", opts:["13","14","15","17"], ans:"15" },
-  { id:13, q:"🚗 Parkda 8 maşın var idi. Daha 5 maşın gəldi. İndi neçə maşın var?", opts:["12","13","14","15"], ans:"13" },
-  { id:14, q:"🍕 Pizza 8 dilimə bölündü. Hər dostumun 2 dilim yedi. Neçə dost var?", opts:["3","4","5","6"], ans:"4" },
-  { id:15, q:"💰 Sənin 20 manatın var. Dəftərə 5 manat, qələmə 3 manat xərclədin. Neçə manatın qaldı?", opts:["10","11","12","13"], ans:"12" },
-  { id:16, q:"🌺 Bağçada 15 gül var idi. 6 gül kəsilib aparıldı. Neçə gül qaldı?", opts:["7","8","9","11"], ans:"9" },
-  { id:17, q:"✏️ Dəftərdə 50 səhifə var. 23 səhifəni yazıb bitirdim. Neçə səhifə qaldı?", opts:["25","26","27","30"], ans:"27" },
-  { id:18, q:"🍇 Səbətdə 24 üzüm var. 3 dostuma bərabər payladım. Hər dost neçə üzüm aldı?", opts:["6","7","8","9"], ans:"8" },
-  { id:19, q:"🎯 Oyun oynadıq. Mən 25 xal, dostum 18 xal qazandı. Xalların fərqi neçədir?", opts:["5","6","7","8"], ans:"7" },
-  { id:20, q:"🏠 Evin birinci mərtəbəsində 4 dairə, ikinci mərtəbəsində 6 dairə var. Cəmi neçə dairə var?", opts:["8","9","10","12"], ans:"10" },
+  { id:1,  q:"🎁 Mehinin 7 qələmi var idi. Anası ona 5 qələm də aldı. İndi Mehinin neçə qələmi var?", opts:["10","11","12","13"], ans:"12" },
+  { id:2,  q:"🎈 Sinifdə 18 şar var idi. 6 şar partladı. Neçə şar qaldı?", opts:["10","11","12","13"], ans:"12" },
+  { id:3,  q:"🍎 Səbətdə 4 sıra alma var, hər sırada 3 alma var. Cəmi neçə alma var?", opts:["10","11","12","14"], ans:"12" },
+  { id:4,  q:"📚 20 kitab 5 uşağa bərabər paylandı. Hər uşaq neçə kitab aldı?", opts:["3","4","5","6"], ans:"4" },
+  { id:5,  q:"⚽ Komandada 9 oğlan var idi, 4 qız da qoşuldu. Komandada indi neçə uşaq var?", opts:["11","12","13","14"], ans:"13" },
+  { id:6,  q:"🍪 15 peçenyedən 7-si yeyildi. Neçə peçenye qaldı?", opts:["6","7","8","9"], ans:"8" },
+  { id:7,  q:"🧃 3 qutuda şirə var, hər qutuda 6 şirədir. Cəmi neçə şirə var?", opts:["16","17","18","19"], ans:"18" },
+  { id:8,  q:"🎨 24 boya 6 uşağa bərabər bölündü. Hər uşağa neçə boya düşdü?", opts:["3","4","5","6"], ans:"4" },
+  { id:9,  q:"🎓 Mehin 9 yaşındadır. 5 ildən sonra neçə yaşı olacaq?", opts:["12","13","14","15"], ans:"14" },
+  { id:10, q:"💰 Sənin 25 manatın var. 9 manata dəftər aldın. Neçə manatın qaldı?", opts:["14","15","16","17"], ans:"16" },
 ];
 
 const WATER_TYPES = [
@@ -655,6 +585,7 @@ function Quiz() {
 
   const answered = Object.keys(answers).length;
   const score = Object.values(answers).filter(a=>a.correct).length;
+  const winThreshold = Math.ceil(currentQuiz.length * 0.8);
 
   const handleShowResult = () => {
     setShowResult(true);
@@ -813,7 +744,7 @@ function QuizMath() {
 
   const handleShowResult = () => {
     setShowResult(true);
-    if (score >= 20) {
+    if (score >= winThreshold) {
       playVictorySound();
       setCelebrate(false);
       setTimeout(() => setCelebrate(true), 100);
@@ -848,7 +779,7 @@ function QuizMath() {
     {id:"cedvel",   label:"📊 Vurma Cədvəli"},
   ];
 
-  const isWin = showResult && score >= 20;
+  const isWin = showResult && score >= winThreshold;
 
   return (
     <>

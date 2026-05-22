@@ -78,25 +78,25 @@ The mathematics section is comprehensive and interactive with two main subsectio
 **Two Learning Modules:**
 
 1. **📐 Misal (Equation Practice)** - Learn through equations
-   - **➕ Toplama (Addition)** - 25 questions
+   - **➕ Toplama (Addition)** - 10 questions
      - Format: `10 + X = 13, X = ?`
      - Visual separation of equation and answer
      - Color-coded: Green for equation, Orange for `X = ?`
    
-   - **➖ Çıxma (Subtraction)** - 25 questions
+   - **➖ Çıxma (Subtraction)** - 10 questions
      - Format: `20 - X = 12, X = ?`
      - Progressive difficulty
    
-   - **✖️ Vurma (Multiplication)** - 25 questions
+   - **✖️ Vurma (Multiplication)** - 10 questions
      - Format: `X × 3 = 21, X = ?`
      - Builds number sense
    
-   - **➗ Bölmə (Division)** - 25 questions
+   - **➗ Bölmə (Division)** - 10 questions
      - Format: `24 ÷ X = 6, X = ?`
      - Reinforces multiplication concepts
 
 2. **📖 Məsələ (Story Problems)** - Learn through real-world contexts
-   - 20 child-friendly story problems
+   - 10 child-friendly story problems
    - Uses emojis for visual appeal
    - Topics include: chocolate, balloons, books, games, sports
    - No abstract `X` notation
@@ -220,13 +220,13 @@ Hot Module Replacement (HMR) is enabled for instant updates
 | **Oceans** | 5 | Ranked by size |
 | **Planets** | 8 | Full solar system |
 | **Quiz Questions** | 32 | General knowledge |
-| **Addition Problems** | 25 | Equation format |
-| **Subtraction Problems** | 25 | Equation format |
-| **Multiplication Problems** | 25 | Equation format |
-| **Division Problems** | 25 | Equation format |
-| **Story Problems** | 20 | Real-world context |
+| **Addition Problems** | 10 | Equation format |
+| **Subtraction Problems** | 10 | Equation format |
+| **Multiplication Problems** | 10 | Equation format |
+| **Division Problems** | 10 | Equation format |
+| **Story Problems** | 10 | Real-world context |
 | **Multiplication Tables** | 10 | 1-10 tables |
-| **Total Questions** | 197 | All types |
+| **Total Questions** | 137 | All types |
 
 ---
 
