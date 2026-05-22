@@ -753,7 +753,7 @@ function QuizMath() {
 
   const getResult = () => {
     const n = currentQuiz.length, s = score;
-    if(s===n) return {emoji:"🏆",text:`${s}/${n} — Riyaziyyat Genisi!`,stars:"⭐⭐⭐⭐⭐",msg:"Heç bir sual səni çaşdırmadı! Sən riyaziyyatda çox bacarıqlı! 🌟"};
+    if(s >= n - 1) return {emoji:"🏆",text:`${s}/${n} — Mehin, sən dahisən!`,stars:"⭐⭐⭐⭐⭐",msg:"Möhtəşəm nəticə! Sən artıq çox güclüsən və bunun üstünə daha da gözəl əlavələr edə bilərsən. Davam et, super gedirsən! 🌟"};
     if(s>=n*0.8) return {emoji:"🥇",text:`${s}/${n} — Çox Yaxşı!`,stars:"⭐⭐⭐⭐",msg:"Dəhşətli nəticə! Sən riyaziyyatı sevirsən! 💪"};
     if(s>=n*0.6) return {emoji:"🥈",text:`${s}/${n} — Yaxşı!`,stars:"⭐⭐⭐",msg:"Yaxşı iş! Daha çox məsələ həll et! 📚"};
     if(s>=n*0.4) return {emoji:"🥉",text:`${s}/${n} — Orta`,stars:"⭐⭐",msg:"Qorxma! Hər gün biraz məsələ həll et! 🔄"};
@@ -1424,7 +1424,6 @@ const TABS = [
   {id:"teqvim",    label:"📅 Təqvim"},
   {id:"materikler",label:"🌍 Materiklər"},
   {id:"kosmos",    label:"🚀 Kosmos"},
-  {id:"test",      label:"🎯 Test"},
   {id:"riyaziyyat",label:"🔢 RIYAZIYYAT"},
 ];
 
