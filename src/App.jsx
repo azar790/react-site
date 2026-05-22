@@ -585,7 +585,6 @@ function Quiz() {
 
   const answered = Object.keys(answers).length;
   const score = Object.values(answers).filter(a=>a.correct).length;
-  const winThreshold = Math.ceil(currentQuiz.length * 0.8);
 
   const handleShowResult = () => {
     setShowResult(true);
@@ -741,6 +740,7 @@ function QuizMath() {
 
   const answered = Object.keys(answers).length;
   const score = Object.values(answers).filter(a=>a.correct).length;
+  const winThreshold = Math.ceil(currentQuiz.length * 0.8);
 
   const handleShowResult = () => {
     setShowResult(true);
